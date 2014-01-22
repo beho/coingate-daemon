@@ -1,0 +1,12 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    bitcoin (0.2.0)
+      bitcoin-ruby
+    bitcoin-ruby (0.0.4)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  bitcoin (~> 0.2.0)
