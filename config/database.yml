@@ -1,0 +1,11 @@
+# production:
+#   host:
+#   user:
+#   password:
+#   database:
+#   adapter: tinytds
+#   timeout:
+
+development:
+  database: coingate-daemon.db
+  adapter: sqlite
