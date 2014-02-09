@@ -1,4 +1,5 @@
 class Rate < Sequel::Model
+  many_to_one :source_currency, class: :Currency
 
   class Puller
     def pull_all
@@ -22,19 +23,18 @@ class Rate < Sequel::Model
       end
 
       def to_rate_hash( response_json, target_currency )
-        puts response_json
         data = response_json[:data]
 
         {
-          market_id: MARKET_ID,
           source_currency_id: 'BTC',
           target_currency_id: target_currency,
+          market_id: MARKET_ID,
+          at: Time.at( data[:now].to_i / 1e6 ).utc, # timestamp with resolution to microseconds
           high: data[:high][:value].to_f,
           low: data[:low][:value].to_f,
           avg: data[:avg][:value].to_f,
           buy: data[:buy][:value].to_f,
-          sell: data[:sell][:value].to_f,
-          created_at: Time.at( data[:now].to_i / 1e6 ).utc # timestamp with resolution to microseconds
+          sell: data[:sell][:value].to_f
         }
       end
 

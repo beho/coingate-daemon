@@ -1,6 +1,6 @@
+require 'rubygems'
+require 'bundler'
 Bundler.require
-# puts root
-ROOT = Dir.pwd
 
 ENV['RACK_ENV'] ||= 'development'
 
