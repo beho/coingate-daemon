@@ -11,7 +11,7 @@ class API < Grape::API
       optional :at, type: DateTime, desc: 'Time for which to get rate; default is most recent rate.'
       optional :market, type: Integer, desc: 'Market ID; default is 1 – MtGox.'
     end
-    get '/:source/:target' do
+    get '/:source-:target' do
       timepoint = params[:at] || Time.now.utc
       market = params[:market] || 1
 
