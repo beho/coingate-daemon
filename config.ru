@@ -1,3 +1,3 @@
-require_relative 'run'
+require_relative 'config/app'
 
 run API
