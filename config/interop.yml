@@ -1,0 +1,6 @@
+btc:
+  username: test
+  password: testsecret
+  host: 10.11.12.1
+  port: 18332
+  ssl: false

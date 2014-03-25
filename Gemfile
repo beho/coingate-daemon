@@ -5,10 +5,13 @@ gem 'rest-client', '~> 1.6.7'
 gem 'sequel', '~> 4.7.0'
 gem 'grape', '~> 0.6.1'
 gem 'whenever', '~> 0.9.0', require: false
-gem 'puma' #, '~> 2.7.1'
+gem 'puma' # , '~> 2.7.1'
+gem 'bitcoin-client'
+gem 'sneakers' # frenzy_bunnies if JRuby
 
 group :development do
-  gem 'wirble'
+  # gem 'wirble'
+  # gem 'pry-plus'
   gem 'rubocop'
   gem 'sqlite3'
 end

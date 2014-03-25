@@ -1,4 +1,11 @@
-Dir['./lib/models/*.rb'].each {|f| require f }
-Dir['./lib/tasks/*.rb'].each {|f| require f }
+require 'refinements'
 
-autoload :API, './lib/api/api.rb'
+Dir['./lib/models/**/*.rb'].each {|f| require f }
+
+require_relative 'services/coind'
+require_relative 'services/coinds/bitcoind'
+require_relative 'services/interop'
+
+Dir['./lib/workers/**/*.rb'].each {|f| require f }
+
+Dir['./lib/api/*.rb'].each {|f| require f }
