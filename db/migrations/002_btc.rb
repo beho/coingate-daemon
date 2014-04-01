@@ -18,7 +18,7 @@ Sequel.migration do
       Integer :confirmations
 
       BigDecimal :amount, size: [19, 8] # precision for 1 satoshi
-      foreign_key :real_currency_id, :currencies
+      foreign_key :real_currency_id, :currencies, type: 'char(3)'
       BigDecimal :rate, size: [19, 4]
       BigDecimal :fee_percent, size: [19, 8], null: true
 
