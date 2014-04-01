@@ -8,4 +8,6 @@ require_relative 'services/interop'
 
 Dir['./lib/workers/**/*.rb'].each {|f| require f }
 
-Dir['./lib/api/*.rb'].each {|f| require f }
+require_relative 'api/customers'
+require_relative 'api/rates'
+require_relative 'api/web_support'

@@ -9,6 +9,7 @@ module Coingate
           memo
         end
       end
+
     end
 
   end

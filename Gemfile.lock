@@ -44,6 +44,7 @@ GEM
     parser (2.1.4)
       ast (~> 1.1)
       slop (~> 3.4, >= 3.4.5)
+    pg (0.17.1)
     powerpack (0.0.9)
     puma (2.7.1)
       rack (>= 1.1, < 2.0)
@@ -92,6 +93,7 @@ DEPENDENCIES
   bitcoin-client
   grape (~> 0.6.1)
   json (~> 1.8.1)
+  pg (~> 0.17.1)
   puma
   rest-client (~> 1.6.7)
   rubocop
