@@ -11,7 +11,7 @@ module Coingate
           requires :source, type: String, desc: 'Target currency acronym.'
           optional :at, type: DateTime, desc: 'Time for which to get rate; default is most recent rate.'
         end
-        get '/:source-:target' do
+        get '/:source/:target' do
           timepoint = params[:at] || Time.now.utc
 
           rate = Rate.where{ at <= timepoint }
@@ -22,7 +22,7 @@ module Coingate
 
           error!('Not Found', 404) unless rate
 
-          rate.to_hash
+          { rate: rate.value }
         end
 
       end

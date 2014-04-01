@@ -3,7 +3,7 @@ Sequel.migration do
     create_table :customers do
       primary_key :id
 
-      foreign_key :currency_id, :currencies
+      foreign_key :default_currency_id, :currencies
       Decimal :fee_percent, size: [19, 4]
 
       DateTime :created_at
