@@ -13,5 +13,3 @@ Market.import([:id, :name],
 
 Rate.import([:source_currency_id, :target_currency_id, :market_id, :at, :value], [
   ['BTC', 'CZK', 1, Time.now.utc, 11450]])
-
-

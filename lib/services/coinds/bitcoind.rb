@@ -1,14 +1,14 @@
 module Coingate
 
-  module Bitcoind
+  class Bitcoind
     include Coingate::Coind
 
     def wallet_class
-      BTC::Wallet
+      BtcWallet
     end
 
-    def wallet_class
-      BTC::Tx
+    def tx_class
+      BtcTx
     end
 
     def new_address

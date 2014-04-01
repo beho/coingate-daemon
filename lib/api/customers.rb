@@ -21,7 +21,9 @@ module API
             post do
               altcoin = params[:altcoin].downcase.to_sym
 
-              wallet = Coind.for( altcoin ).new_wallet( customer_id, office_id )
+              Customer.find_or_create( id: params[:customer_id] )
+
+              wallet = Coingate::Coind.for( altcoin ).new.new_wallet( params[:customer_id], params[:office_id] )
               wallet.save
 
               wallet.to_hash

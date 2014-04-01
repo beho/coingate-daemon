@@ -10,4 +10,5 @@ Dir['./lib/workers/**/*.rb'].each {|f| require f }
 
 require_relative 'api/customers'
 require_relative 'api/rates'
+require_relative 'api/tx'
 require_relative 'api/web_support'

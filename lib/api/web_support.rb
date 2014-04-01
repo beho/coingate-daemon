@@ -4,7 +4,7 @@ module Coingate
 
     class WebSupport < Grape::API
       prefix '/api/web'
-      version 'v1', :using => :path, :cascade => false
+      version 'v1', :using => :path, :cascade => true
       format :json
 
       mount Customers

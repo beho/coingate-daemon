@@ -12,7 +12,7 @@ module Coingate
     end
 
     def new_wallet( customer_id, office_id )
-      wallet_class.new( customer_id, office_id, new_address )
+      wallet_class.create( customer_id: customer_id, office_id: office_id, pub_key: new_address )
     end
 
   end

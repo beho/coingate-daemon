@@ -12,7 +12,7 @@ Sequel.migration do
     end
 
     create_table :customers do
-      primary_key :id
+      Integer :id, primary_key: true
 
       foreign_key :default_currency_id, :currencies, type: 'char(3)'
       Decimal :fee_percent, size: [19, 4]
