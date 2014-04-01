@@ -1,5 +1,6 @@
 production:
   host: localhost
+  user: coingate_daemon
   database: coingate_daemon
   adapter: postgres
 

@@ -1,15 +1,5 @@
 Sequel.migration do
   up do
-    create_table :customers do
-      primary_key :id
-
-      foreign_key :default_currency_id, :currencies
-      Decimal :fee_percent, size: [19, 4]
-
-      DateTime :created_at
-      DateTime :updated_at
-    end
-
     create_table :currencies do
       String :id, size: 3, primary_key: true
       String :name, size: 16
@@ -19,6 +9,16 @@ Sequel.migration do
     create_table :markets do
       Integer :id, primary_key: true
       String :name, size: 16
+    end
+
+    create_table :customers do
+      primary_key :id
+
+      foreign_key :default_currency_id, :currencies
+      Decimal :fee_percent, size: [19, 4]
+
+      DateTime :created_at
+      DateTime :updated_at
     end
 
     create_table :rates do
@@ -34,6 +34,6 @@ Sequel.migration do
   end
 
   down do
-    drop_table(:rates, :markets, :currencies, :customers)
+    drop_table(:rates, :customers, :markets, :currencies)
   end
 end
