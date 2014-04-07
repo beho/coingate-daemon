@@ -1,3 +1,4 @@
 .bundle
 coingate-daemon.db
 Gemfile.lock
+log/*

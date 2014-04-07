@@ -8,7 +8,7 @@ module Coingate
 
     def self.btc
       btc_config = @@config[:btc]
-      Bitcoin::Client.new( btc_config[:username], btc_config[:password], host: btc_config[:host], port: btc_config[:port], ssl: btc_config[:ssl] )
+      ::Bitcoin::Client.new( btc_config[:username], btc_config[:password], host: btc_config[:host], port: btc_config[:port], ssl: btc_config[:ssl] )
     end
   end
 

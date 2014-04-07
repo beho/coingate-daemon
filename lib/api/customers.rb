@@ -15,16 +15,18 @@ module API
           params do
             requires :altcoin, type: String, desc: 'Altcoin identifier.'
             requires :office_id, type: Integer, desc: 'Office id'
+            optional :in, type: String, default: :CZK, desc: 'Real currency of the wallet'
           end
           resource ':altcoin' do
 
             post do
               altcoin = params[:altcoin].downcase.to_sym
 
-              Customer.find_or_create( id: params[:customer_id] )
+              customer = Customer.find_or_create( id: params[:customer_id] ) do |c|
+                c.default_currency_id = params[:in]
+              end
 
-              wallet = Coingate::Coind.for( altcoin ).new.new_wallet( params[:customer_id], params[:office_id] )
-              wallet.save
+              wallet = Coingate::Coin.for( altcoin ).create_wallet( customer, params[:office_id] )
 
               wallet.to_hash
             end
