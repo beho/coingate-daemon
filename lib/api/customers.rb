@@ -26,9 +26,12 @@ module API
                 c.default_currency_id = params[:in]
               end
 
-              wallet = Coingate::Coin.for( altcoin ).create_wallet( customer, params[:office_id] )
+              wallet, wallet_data = Coingate::Coin.for( altcoin ).create_wallet( customer, params[:office_id] )
 
-              wallet.to_hash
+              wallet_hash = wallet.to_hash
+              wallet_hash[:address] = wallet_data[:address]
+
+              wallet_hash
             end
 
           end

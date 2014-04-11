@@ -21,9 +21,9 @@ module Coingate
         stored_currency_id: customer.default_currency_id
       )
 
-      block.call( wallet )
+      wallet_data = block.call( wallet )
 
-      wallet
+      [wallet, wallet_data]
     end
 
     def wallet_for( address )
