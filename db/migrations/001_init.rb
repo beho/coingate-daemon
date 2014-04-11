@@ -64,12 +64,21 @@ Sequel.migration do
       BigDecimal :rate, size: [19, 4]
       BigDecimal :fee_percent, size: [19, 4]
 
+      TrueClass :confirmed, default: false
+
       DateTime :created_at
       DateTime :updated_at
     end
+
+    create_table :settings do
+      Integer :id, primary_key: true
+
+      BigDecimal :fee_percent, size: [19, 4]
+    end
+
   end
 
   down do
-    drop_table(:transactions, :wallets, :rates, :customers, :markets, :currencies)
+    drop_table(:settings, :transactions, :wallets, :rates, :customers, :markets, :currencies)
   end
 end

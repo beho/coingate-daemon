@@ -7,3 +7,4 @@ production:
 development:
   database: coingate-daemon.db
   adapter: sqlite
+  integer_booleans: true

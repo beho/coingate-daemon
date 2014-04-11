@@ -14,11 +14,7 @@ module Coingate
         get '/:source/:target' do
           timepoint = params[:at] || Time.now.utc
 
-          rate = Rate.where{ at <= timepoint }
-            .order( :at )
-            .first(
-              source_currency_id: params[:source],
-              target_currency_id: params[:target] )
+          rate = Rate.for( params[:source].upcase, params[:target].upcase, timepoint )
 
           error!('Not Found', 404) unless rate
 

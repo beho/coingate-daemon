@@ -12,4 +12,8 @@ Market.import([:id, :name],
   [[1, 'Internal']])
 
 Rate.import([:source_currency_id, :target_currency_id, :market_id, :at, :value], [
-  ['BTC', 'CZK', 1, Time.now.utc, 11450]])
+  ['BTC', 'CZK', 1, Time.now.utc, 11450],
+  ['BTC', 'EUR', 1, Time.now.utc, 450]])
+
+Settings.import([:id, :fee_percent], [
+  [1, 0.08]])

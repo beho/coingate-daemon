@@ -31,10 +31,6 @@ module API
               wallet.to_hash
             end
 
-            get 'txs' do
-              # { altcoin: 'BTC', created_at: , confirmed_at:, amount: }
-            end
-
           end
 
           get 'fee' do
@@ -44,6 +40,21 @@ module API
 
             customer.fee_percent
           end
+
+        end
+
+        params do
+          optional :since
+        end
+        get 'txs' do
+          txs = Transaction.join(Wallet, :id => :wallet_id)
+            .where( customer_id: params[:customer_id] )
+            .order( Sequel.desc(:created_at) )
+
+          txs = txs.where( office_id: params[:office_id] ) if params[:office_id]
+          txs = txs.where{ created_at > params[:since] } if params[:since]
+
+          txs.map(&:to_hash)
         end
 
       end

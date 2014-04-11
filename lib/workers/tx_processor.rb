@@ -1,12 +1,12 @@
 class TxProcessor
   include Sneakers::Worker
-  from_queue 'coingate.tx'
+  from_queue 'txs.btc'
 
-  def work( msg )
-    # tx_id = JSON.parse( msg )['txid']
+  def work( txid )
+    Coingate::Bitcoin.new.create_or_confirm_transaction( txid )
 
-    puts msg
-    # put into db or whatever
+    # Coingate::Bitcoin.create_or_confirm_transaction( address, amount, txid, tx_data )
+
     ack!
   end
 end
