@@ -7,7 +7,7 @@ gem 'grape', '~> 0.6.1'
 gem 'whenever', '~> 0.9.0', require: false
 gem 'puma' # , '~> 2.7.1'
 gem 'bitcoin-client'
-gem 'sneakers' # frenzy_bunnies if JRuby
+gem 'sneakers', '~> 0.1.1.pre' # frenzy_bunnies if JRuby
 
 group :development do
   # gem 'wirble'

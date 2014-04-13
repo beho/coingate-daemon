@@ -1,5 +1,4 @@
 module Coingate
-
   module Refinements
 
     refine Hash do
@@ -9,9 +8,7 @@ module Coingate
           memo
         end
       end
-
     end
 
   end
-
 end

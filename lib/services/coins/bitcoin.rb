@@ -18,32 +18,45 @@ module Coingate
     end
 
     def create_or_confirm_transaction( txid )
-      tx = get_tx( txid )
+      tx_data = get_tx( txid )
 
-      address = tx['address']
-      amount = tx['amount'].to_f
+      tx_details = tx_data['details'][0]
+      address = tx_details['address']
+      amount = tx_details['amount']
 
-      super( txid, address, amount, tx )
+      puts amount
+      super( txid, address, amount, tx_data )
     end
 
     def create_transaction( txid, address, amount, tx_data )
       super( txid, address, amount ) do |tx|
-        tx_class.create( transaction_id: tx.id, txid: txid, confirmations: tx_data[:confirmations] )
+        tx_class.create( transaction_id: tx.id, txid: txid, confirmations: tx_data['confirmations'] )
       end
     end
 
     def confirm_transaction( tx, tx_data )
       super( tx ) do
-        tx_class[tx.id].update( :confirmations => tx_data[:confirmations] )
-
-        wallet = tx.wallet
-        wallet.update(
-          :incoming_amount => wallet.incoming_amount + tx.incoming_amount,
-          :stored_amount => wallet.stored_amount + tx.stored_amount,
-          :confirmed => true )
+        tx_class[tx.id].update( :confirmations => tx_data['confirmations'] )
       end
     end
 
   end
 
 end
+
+# TX example
+#
+# {
+#   "amount"=>0.0,
+#   "confirmations"=>0,
+#   "generated"=>true,
+#   "txid"=>"36f0bc5ac860499f59fe92acd34bc479a28eaa02aacb2dfc5ab2dbe6c256f6ee",
+#   "time"=>1390628962,
+#   "timereceived"=>1390628962,
+#   "details"=>[{
+#     "account"=>"",
+#     "address"=>"mktDHHMkvW9toTocYygih8bRoEu6wR8zgt",
+#     "category"=>"orphan",
+#     "amount"=>50.0005
+#   }]
+# }

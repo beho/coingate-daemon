@@ -2,9 +2,9 @@ module Coingate
 
   module API
 
-    class Tx < Grape::API
-      prefix '/api/tx'
-      version 'v1', :using => :path, :cascade => true
+    class Txs < Grape::API
+      prefix '/api/txs'
+      # version 'v1', :using => :path, :cascade => true
       format :json
 
       params do
@@ -14,7 +14,7 @@ module Coingate
         channel = MQ_CONN.create_channel
         exchange = channel.direct('sneakers', durable: true )
 
-        exchange.publish(params[:txid], routing_key: BTC_QUEUE)
+        exchange.publish( params[:txid], routing_key: BTC_QUEUE )
 
         { :status => :accepted }
       end

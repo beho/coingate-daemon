@@ -4,7 +4,7 @@ module Coingate
   class Interop
     def self.initialize( config )
       @@config = config.with_symbol_keys
-    end
+  end
 
     def self.btc
       btc_config = @@config[:btc]

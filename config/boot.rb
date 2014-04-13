@@ -4,16 +4,20 @@ Bundler.require
 
 ENV['RACK_ENV'] ||= 'development'
 
-root = File.expand_path( '../lib', File.dirname(__FILE__) )
+boot_path = File.dirname(__FILE__)
+root = File.expand_path( '../lib', boot_path )
+
 $LOAD_PATH << root
 
-DB = Sequel.connect( YAML.load( File.read( './config/database.yml' ) )[ENV['RACK_ENV']] )
+# DB = Sequel.connect( YAML.load( File.read( './config/database.yml' ) )[ENV['RACK_ENV']] )
 
-COINS = {
-  :btc => :Bitcoin
-}
+# COINS = {
+#   :btc => :Bitcoin
+# }
 
 require 'coingate'
 
-Coingate::Interop.initialize( YAML.load( File.read( './config/interop.yml' ) ) )
-Coingate::Coin.initialize( COINS )
+
+
+# Coingate::Interop.initialize( YAML.load( File.read( './config/interop.yml' ) ) )
+# Coingate::Coin.initialize( COINS )

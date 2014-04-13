@@ -1,8 +1,12 @@
 module Coingate
 
   class Coin
-    def self.initialize( coinds )
-      @@mapping = Hash[coinds.map do |altcoin, daemon_class|
+    @@default_coins = {
+      :btc => :Bitcoin
+    }
+
+    def self.initialize( coins = {} )
+      @@mapping = Hash[@@default_coins.merge( coins ).map do |altcoin, daemon_class|
         [altcoin, Coingate.const_get( daemon_class ) ]
       end]
     end
@@ -27,18 +31,19 @@ module Coingate
     end
 
     def wallet_for( address )
+      puts address
       wallet_class.first( address: address ).wallet
     end
 
 
 
     def create_or_confirm_transaction( txid, address, amount, tx_data )
-      tx = tx_class.first( txid: txid )
+      altcoin_tx = tx_class.first( txid: txid )
 
-      if tx.nil?
+      if altcoin_tx.nil?
         create_transaction( txid, address, amount, tx_data )
       else
-        confirm_transaction( tx, tx_data )
+        confirm_transaction( altcoin_tx.transaction, tx_data )
       end
     end
 
@@ -67,6 +72,7 @@ module Coingate
 
     def confirm_transaction( tx, &block )
       tx.update( :confirmed => true )
+      tx.wallet.update_balance
 
       block.call( tx )
 
@@ -76,11 +82,11 @@ module Coingate
     # for defining subclasses
     class << self
       def handles( currency_id, wallet_class, tx_class )
-        instance_eval do
+        # instance_eval do
           define_method( :currency_id ) { currency_id.to_s }
           define_method( :wallet_class ) { wallet_class }
           define_method( :tx_class ) { tx_class }
-        end
+        # end
       end
     end
 
