@@ -12,7 +12,7 @@ module Coingate
       end
       post 'btc' do
         channel = MQ_CONN.create_channel
-        exchange = channel.direct('sneakers', durable: true )
+        exchange = channel.direct( EXCHANGE ) # , durable: true
 
         exchange.publish( params[:txid], routing_key: BTC_QUEUE )
 

@@ -13,7 +13,7 @@ module Coingate
     attr_reader :env, :config_base_dir
     attr_accessor :logger
 
-    attr_reader :db_config, :interop_config, :rabbitmq_config
+    attr_reader :db_config, :interop_config, :rabbitmq_config, :rabbitmq_workers_config
 
     def tx_worker_config( altcoin )
       [tx_queue_name(altcoin), @rabbitmq_workers_config[:tx]]
