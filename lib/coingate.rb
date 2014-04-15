@@ -38,6 +38,7 @@ module Coingate
 
       @logger = Logger.new( STDERR )
 
+      Sequel.default_timezone = :utc
       Sequel::Model.db = db
 
       # Interop.initialize( @interop_config )

@@ -55,11 +55,14 @@ module API
           txs = Transaction.join(Wallet, :id => :wallet_id)
             .where( customer_id: params[:customer_id] )
             .select_all( :transactions )
-            .order( Sequel.desc(:created_at) )
+            .order( Sequel.desc(:transactions__created_at) )
+
+          since_timepoint = params[:since] ? Time.parse( params[:since] ) : nil
+          until_timepoint = params[:until] ? Time.parse( params[:until] ) : nil
 
           txs = txs.where( office_id: params[:office_id] ) if params[:office_id]
-          txs = txs.where{ created_at >= params[:since] } if params[:since]
-          txs = txs.where{ created_at <= params[:until] } if params[:until]
+          txs = txs.where{ transactions__created_at >= since_timepoint } if since_timepoint
+          txs = txs.where{ transactions__created_at <= until_timepoint } if until_timepoint
 
           txs.map(&:to_hash)
         end
