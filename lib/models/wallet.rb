@@ -6,6 +6,7 @@ class Wallet < Sequel::Model( :wallets )
 
   def compute_balance
     balance = transactions_dataset.get{ [sum(incoming_amount).as(incoming), sum(stored_amount).as(stored)] }
+
     [balance[0] || 0, balance[1] || 0]
   end
 

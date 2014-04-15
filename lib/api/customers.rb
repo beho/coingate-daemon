@@ -48,14 +48,18 @@ module API
 
         params do
           optional :since
+          optional :until
+          optional :office_id
         end
         get 'txs' do
           txs = Transaction.join(Wallet, :id => :wallet_id)
             .where( customer_id: params[:customer_id] )
+            .select_all( :transactions )
             .order( Sequel.desc(:created_at) )
 
           txs = txs.where( office_id: params[:office_id] ) if params[:office_id]
-          txs = txs.where{ created_at > params[:since] } if params[:since]
+          txs = txs.where{ created_at >= params[:since] } if params[:since]
+          txs = txs.where{ created_at <= params[:until] } if params[:until]
 
           txs.map(&:to_hash)
         end
