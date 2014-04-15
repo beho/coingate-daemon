@@ -24,7 +24,6 @@ module Coingate
       address = tx_details['address']
       amount = tx_details['amount']
 
-      puts amount
       super( txid, address, amount, tx_data )
     end
 
