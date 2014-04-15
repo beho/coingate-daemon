@@ -5,12 +5,13 @@ class Wallet < Sequel::Model( :wallets )
   plugin :timestamps
 
   def compute_balance
-    transactions_dataset.get{ [sum(incoming_amount).as(incoming), sum(stored_amount).as(stored)] }
+    balance = transactions_dataset.get{ [sum(incoming_amount).as(incoming), sum(stored_amount).as(stored)] }
+    [balance[0] || 0, balance[1] || 0]
   end
 
   def update_balance
     self.class.db.transaction do
-      incoming, stored = balance
+      incoming, stored = compute_balance
 
       update( incoming_amount: incoming, stored_amount: stored )
     end
