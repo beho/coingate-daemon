@@ -2,7 +2,7 @@ class BaseTxProcessor
   include Sneakers::Worker
 
   def work( txid )
-    Coin.for( self.class.altcoin ).create_or_confirm_transaction( txid )
+    Coingate::Coin.for( self.class.altcoin ).create_or_confirm_transaction( txid )
 
     ack!
   end
