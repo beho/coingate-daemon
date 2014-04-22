@@ -7,4 +7,12 @@ class Settings < Sequel::Model( :settings )
     instance.fee_percent
   end
 
+  def self.system_customer_id
+    instance.system_customer_id
+  end
+
+  def self.system_customer
+    Customer[self.system_customer_id]
+  end
+
 end

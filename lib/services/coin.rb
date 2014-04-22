@@ -22,7 +22,7 @@ module Coingate
         customer_id: customer.id,
         office_id: office_id,
         incoming_currency_id: currency_id,
-        stored_currency_id: customer.default_currency_id
+        stored_currency_id: customer.currency_id
       )
 
       wallet_data = block.call( wallet )
@@ -37,55 +37,73 @@ module Coingate
 
 
 
-    def create_or_confirm_transaction( txid, address, amount, tx_data )
+    def create_or_confirm_payment( txid, address, amount, tx_data )
       altcoin_tx = tx_class.first( txid: txid )
 
       if altcoin_tx.nil?
-        create_transaction( txid, address, amount, tx_data )
+        create_payment( txid, address, amount, tx_data )
       else
-        confirm_transaction( altcoin_tx.transaction, tx_data )
+        confirm_payment( altcoin_tx.payment, tx_data )
       end
     end
 
-    def create_transaction( txid, address, amount, &block )
+    def create_payment( txid, address, amount, &block )
       wallet = wallet_for( address )
       rate = Rate.current( currency_id, wallet.stored_currency_id ).value
       fee = wallet.customer.fee_percent || Settings.fee_percent
 
-      stored_amount = amount * rate * (1 + fee)
+      stored_amount, fee = Payment.split_incoming_amount( amount, rate, fee )
 
-      transaction = Transaction.create(
+      payment = Payment.create(
         wallet_id: wallet.id,
-        incoming_currency_id: currency_id,
-        incoming_amount: amount,
-        stored_currency_id: wallet.stored_currency_id,
-        stored_amount: stored_amount,
+        source_currency_id: currency_id,
+        source_amount: amount,
+        target_currency_id: wallet.stored_currency_id,
+        target_amount: stored_amount,
         rate: rate,
         fee_percent: fee
       )
 
-      block.call( transaction )
+      block.call( payment )
 
-      transaction
+      payment
     end
 
 
-    def confirm_transaction( tx, &block )
-      tx.update( :confirmed => true )
-      tx.wallet.update_balance
+    def confirm_payment( payment, &block )
+      source_income, source_fee = payment.split_source_amount
+      target_income, target_fee = payment.split_target_amount
 
-      block.call( tx )
+      income_transaction = Transaction.create(
+        customer_id: payment.wallet.customer_id,
+        source_currency_id: payment.source_currency_id,
+        source_amount: source_income,
+        target_currency_id: payment.target_currency_id,
+        target_amount: target_income
+      )
 
-      tx
+      fee_transaction = Transaction.create(
+        customer_id: Settings.system_customer_id,
+        source_currency_id: payment.source_currency_id,
+        source_amount: source_fee,
+        target_currency_id: payment.target_currency_id,
+        target_amount: target_fee
+      )
+
+      payment.update( transaction_id: income_transaction.id, fee_transaction_id: fee_transaction.id )
+
+      block.call( payment )
+
+      payment
     end
 
     # for defining subclasses
     class << self
-      def handles( currency_id, wallet_class, tx_class )
+      def handles( currency_id, wallet_class, payment_class )
         # instance_eval do
           define_method( :currency_id ) { currency_id.to_s }
           define_method( :wallet_class ) { wallet_class }
-          define_method( :tx_class ) { tx_class }
+          define_method( :payment_class ) { payment_class }
         # end
       end
     end

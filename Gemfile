@@ -8,12 +8,15 @@ gem 'whenever', '~> 0.9.0', require: false
 gem 'puma' # , '~> 2.7.1'
 gem 'bitcoin-client'
 gem 'sneakers', '~> 0.1.1.pre' # frenzy_bunnies if JRuby
+gem 'foreman', '~> 0.63.0'
 
 group :development do
   # gem 'wirble'
   # gem 'pry-plus'
   gem 'rubocop'
   gem 'sqlite3'
+
+  gem 'minitest'
 end
 
 group :production do

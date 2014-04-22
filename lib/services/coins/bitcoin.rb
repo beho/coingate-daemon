@@ -1,7 +1,7 @@
 module Coingate
 
   class Bitcoin < Coin
-    handles :BTC, BtcWallet, BtcTransaction
+    handles :BTC, BtcWallet, BtcPayment
 
     def new_address
       Interop.btc.getnewaddress
@@ -17,7 +17,7 @@ module Coingate
       end
     end
 
-    def create_or_confirm_transaction( txid )
+    def create_or_confirm_payment( txid )
       tx_data = get_tx( txid )
 
       tx_details = tx_data['details'][0]
@@ -27,15 +27,15 @@ module Coingate
       super( txid, address, amount, tx_data )
     end
 
-    def create_transaction( txid, address, amount, tx_data )
+    def create_payment( txid, address, amount, tx_data )
       super( txid, address, amount ) do |tx|
-        tx_class.create( transaction_id: tx.id, txid: txid, confirmations: tx_data['confirmations'] )
+        payment_class.create( payment_id: tx.id, txid: txid, confirmations: tx_data['confirmations'] )
       end
     end
 
-    def confirm_transaction( tx, tx_data )
-      super( tx ) do
-        tx_class[tx.id].update( :confirmations => tx_data['confirmations'] )
+    def confirm_payment( payment, tx_data )
+      super( payment ) do
+        payment_class[payment.id].update( :confirmations => tx_data['confirmations'] )
       end
     end
 

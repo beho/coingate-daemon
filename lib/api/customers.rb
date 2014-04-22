@@ -23,7 +23,7 @@ module API
               altcoin = params[:altcoin].downcase.to_sym
 
               customer = Customer.find_or_create( id: params[:customer_id] ) do |c|
-                c.default_currency_id = params[:in]
+                c.currency_id = params[:in]
               end
 
               wallet, wallet_data = Coingate::Coin.for( altcoin ).create_wallet( customer, params[:office_id] )
@@ -52,17 +52,16 @@ module API
           optional :office_id
         end
         get 'txs' do
-          txs = Transaction.join(Wallet, :id => :wallet_id)
-            .where( customer_id: params[:customer_id] )
-            .select_all( :transactions )
-            .order( Sequel.desc(:transactions__created_at) )
-
           since_timepoint = params[:since] ? Time.parse( params[:since] ) : nil
           until_timepoint = params[:until] ? Time.parse( params[:until] ) : nil
 
+          txs = Payment.join(Wallet, :id => :wallet_id)
+            .where( customer_id: params[:customer_id] )
+            .select_all( :transactions )
+            .order( Sequel.desc(:transactions__created_at) )
+            .in_time_interval( since_timepoint, until_timepoint )
+
           txs = txs.where( office_id: params[:office_id] ) if params[:office_id]
-          txs = txs.where{ transactions__created_at >= since_timepoint } if since_timepoint
-          txs = txs.where{ transactions__created_at <= until_timepoint } if until_timepoint
 
           txs.map(&:to_hash)
         end

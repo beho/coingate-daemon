@@ -23,7 +23,11 @@ GEM
       descendants_tracker (~> 0.0.1)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
+    dotenv (0.10.0)
     equalizer (0.0.9)
+    foreman (0.63.0)
+      dotenv (>= 0.7)
+      thor (>= 0.13.6)
     grape (0.6.1)
       activesupport
       builder
@@ -94,6 +98,7 @@ PLATFORMS
 
 DEPENDENCIES
   bitcoin-client
+  foreman (~> 0.63.0)
   grape (~> 0.6.1)
   json (~> 1.8.1)
   pg (~> 0.17.1)

@@ -6,21 +6,21 @@ Sequel.migration do
       String :address, size: 34
     end
 
-    create_table :btc_transactions do
-      foreign_key :transaction_id, :transactions, primary_key: true
+    create_table :btc_payments do
+      foreign_key :payment_id, :payments, primary_key: true
 
       String :txid, size: 64, index: true
       Integer :confirmations
     end
 
     create_table :btc_input_addresses do
-      foreign_key :btc_transaction_id, :btc_transactions
+      foreign_key :btc_payment_id, :btc_payments
       String :address, size: 34
     end
 
   end
 
   down do
-    drop_table(:btc_input_addresses, :btc_transactions, :btc_wallets)
+    drop_table(:btc_input_addresses, :btc_payments, :btc_wallets)
   end
 end
