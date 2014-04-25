@@ -1,7 +1,7 @@
 class Payment < Sequel::Model( :payments )
   many_to_one :wallet
-  one_to_one :transaction, :key => :transaction_id
-  one_to_one :fee_transaction, :class => :Transaction, :key => :transaction_id
+  many_to_one :transaction # not really many_to_one
+  many_to_one :fee_transaction, :class => :Transaction
   plugin :timestamps
 
   SIGNIFICANT_DIGITS = 8
@@ -11,18 +11,17 @@ class Payment < Sequel::Model( :payments )
   end
 
   def split_source_amount
-    self.class.split_amount( source_amount, rate, fee )
+    self.class.split_amount( source_amount, fee_percent )
   end
 
   def split_target_amount
-    self.class.split_amount( target_amount, rate, fee )
+    self.class.split_amount( target_amount, fee_percent )
   end
 
-  def self.split_amount( amount, rate, fee )
-    real_amount = BigDecimal.new(amount, SIGNIFICANT_DIGITS) * BigDecimal.new(rate, SIGNIFICANT_DIGITS)
-    fee = BigDecimal.new(fee, SIGNIFICANT_DIGITS)
+  def self.split_amount( amount, fee_percent )
+    fee_percent = BigDecimal.new(fee_percent, SIGNIFICANT_DIGITS)
 
-    [real_amount * (1 - fee), real_amount * fee]
+    [amount * (1 - fee_percent), amount * fee_percent]
   end
 
   dataset_module do

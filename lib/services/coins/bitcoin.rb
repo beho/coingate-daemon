@@ -34,6 +34,10 @@ module Coingate
     end
 
     def confirm_payment( payment, tx_data )
+      confirmations = tx_data['confirmations']
+
+      return if confirmations == 0
+
       super( payment ) do
         payment_class[payment.id].update( :confirmations => tx_data['confirmations'] )
       end

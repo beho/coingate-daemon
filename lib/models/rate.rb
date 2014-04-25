@@ -10,4 +10,9 @@ class Rate < Sequel::Model
   def self.current( source_currency_id, target_currency_id )
     self.for( source_currency_id, target_currency_id )
   end
+
+
+  def *( amount )
+    value * BigDecimal.new(amount, SIGNIFICANT_DIGITS)
+  end
 end

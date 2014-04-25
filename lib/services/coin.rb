@@ -50,18 +50,18 @@ module Coingate
     def create_payment( txid, address, amount, &block )
       wallet = wallet_for( address )
       rate = Rate.current( currency_id, wallet.stored_currency_id ).value
-      fee = wallet.customer.fee_percent || Settings.fee_percent
+      fee_percent = wallet.customer.fee_percent || Settings.fee_percent
 
-      stored_amount, fee = Payment.split_incoming_amount( amount, rate, fee )
+      target_amount = rate * amount
 
       payment = Payment.create(
         wallet_id: wallet.id,
         source_currency_id: currency_id,
         source_amount: amount,
         target_currency_id: wallet.stored_currency_id,
-        target_amount: stored_amount,
+        target_amount: target_amount,
         rate: rate,
-        fee_percent: fee
+        fee_percent: fee_percent
       )
 
       block.call( payment )
@@ -71,26 +71,30 @@ module Coingate
 
 
     def confirm_payment( payment, &block )
-      source_income, source_fee = payment.split_source_amount
-      target_income, target_fee = payment.split_target_amount
+      if !payment.confirmed?
+        source_income, source_fee = payment.split_source_amount
+        target_income, target_fee = payment.split_target_amount
 
-      income_transaction = Transaction.create(
-        customer_id: payment.wallet.customer_id,
-        source_currency_id: payment.source_currency_id,
-        source_amount: source_income,
-        target_currency_id: payment.target_currency_id,
-        target_amount: target_income
-      )
+        income_transaction = Transaction.create(
+          customer_id: payment.wallet.customer_id,
+          source_currency_id: payment.source_currency_id,
+          source_amount: source_income,
+          target_currency_id: payment.target_currency_id,
+          target_amount: target_income,
+          rate: payment.rate
+        )
 
-      fee_transaction = Transaction.create(
-        customer_id: Settings.system_customer_id,
-        source_currency_id: payment.source_currency_id,
-        source_amount: source_fee,
-        target_currency_id: payment.target_currency_id,
-        target_amount: target_fee
-      )
+        fee_transaction = Transaction.create(
+          customer_id: Settings.system_customer_id,
+          source_currency_id: payment.source_currency_id,
+          source_amount: source_fee,
+          target_currency_id: payment.target_currency_id,
+          target_amount: target_fee,
+          rate: payment.rate
+        )
 
-      payment.update( transaction_id: income_transaction.id, fee_transaction_id: fee_transaction.id )
+        payment.update( transaction_id: income_transaction.id, fee_transaction_id: fee_transaction.id )
+      end
 
       block.call( payment )
 
