@@ -41,6 +41,8 @@ Sequel.migration do
       Integer :office_id
 
       foreign_key :incoming_currency_id, :currencies, type: 'char(3)'
+      String :address, size: 64
+
       # BigDecimal :incoming_amount, size: [19, 8], default: 0
 
       foreign_key :stored_currency_id, :currencies, type: 'char(3)'
@@ -70,6 +72,7 @@ Sequel.migration do
       foreign_key :fee_transaction_id, :transactions
 
       DateTime :created_at
+      DateTime :confirmed_at
       DateTime :updated_at
     end
 
@@ -88,7 +91,8 @@ Sequel.migration do
     create_table :transactions do
       primary_key :id
 
-      foreign_key :customer_id, :customers, index: true
+      foreign_key :customer_id, :customers
+      Integer :office_id
 
       foreign_key :source_currency_id, :currencies, type: 'char(3)'
       BigDecimal :source_amount, size: [19, 8]
@@ -98,8 +102,12 @@ Sequel.migration do
 
       BigDecimal :rate, size: [19, 4]
 
+      BigDecimal :source_balance, size: [19, 8]
+      BigDecimal :target_balance, size: [19, 8]
+
       DateTime :created_at
-      DateTime :updated_at
+
+      index [:customer_id, :office_id]
     end
 
     create_join_table(:withdrawal_id => :withdrawals, :transaction_id => :transactions)

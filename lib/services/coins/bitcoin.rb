@@ -1,25 +1,21 @@
 module Coingate
 
   class Bitcoin < Coin
-    handles :BTC, BtcWallet, BtcPayment
+    handles :BTC, BtcPayment
 
     def new_address
       Interop.btc.getnewaddress
     end
 
-    def get_tx( txid )
+    def get_tx_data( txid )
       Interop.btc.gettransaction( txid )
     end
 
-    def create_wallet( customer, office_id, address = nil )
-      super( customer, office_id ) do |wallet|
-        wallet_class.create( wallet_id: wallet.id, address: address || new_address )
-      end
+    def is_received_tx?( tx_data )
+      tx_data['details'][0]['category'] == 'receive'
     end
 
-    def create_or_confirm_payment( txid )
-      tx_data = get_tx( txid )
-
+    def create_or_confirm_payment( txid, tx_data )
       tx_details = tx_data['details'][0]
       address = tx_details['address']
       amount = tx_details['amount']

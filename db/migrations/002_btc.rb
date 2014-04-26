@@ -1,10 +1,10 @@
 Sequel.migration do
   up do
-    create_table :btc_wallets do
-      foreign_key :wallet_id, :wallets, primary_key: true
+    # create_table :btc_wallets do
+    #   foreign_key :wallet_id, :wallets, primary_key: true
 
-      String :address, size: 34
-    end
+    #   String :address, size: 34
+    # end
 
     create_table :btc_payments do
       foreign_key :payment_id, :payments, primary_key: true
@@ -21,6 +21,6 @@ Sequel.migration do
   end
 
   down do
-    drop_table(:btc_input_addresses, :btc_payments, :btc_wallets)
+    drop_table(:btc_input_addresses, :btc_payments)
   end
 end

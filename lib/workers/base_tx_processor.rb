@@ -2,7 +2,10 @@ class BaseTxProcessor
   include Sneakers::Worker
 
   def work( txid )
-    Coingate::Coin.for( self.class.altcoin ).create_or_confirm_transaction( txid )
+    coin = Coingate::Coin.for( self.class.altcoin )
+    tx_data = coin.get_tx_data( txid )
+
+    coin.create_or_confirm_transaction( txid ) if coin.is_received_tx?( tx_data )
 
     ack!
   end
