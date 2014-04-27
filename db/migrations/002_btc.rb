@@ -13,14 +13,14 @@ Sequel.migration do
       Integer :confirmations
     end
 
-    create_table :btc_input_addresses do
-      foreign_key :btc_payment_id, :btc_payments
-      String :address, size: 34
-    end
+    # create_table :btc_input_addresses do
+    #   foreign_key :btc_payment_id, :btc_payments
+    #   String :address, size: 34
+    # end
 
   end
 
   down do
-    drop_table(:btc_input_addresses, :btc_payments)
+    drop_table(:btc_payments)
   end
 end

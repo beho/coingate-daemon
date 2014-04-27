@@ -11,16 +11,16 @@ module Coingate
       Interop.btc.gettransaction( txid )
     end
 
-    def is_received_tx?( tx_data )
+    def tx_is_received?( tx_data )
       tx_data['details'][0]['category'] == 'receive'
     end
 
-    def create_or_confirm_payment( txid, tx_data )
-      tx_details = tx_data['details'][0]
-      address = tx_details['address']
-      amount = tx_details['amount']
+    def tx_receiving_address( tx_data )
+      tx_data['details'][0]['address']
+    end
 
-      super( txid, address, amount, tx_data )
+    def tx_amount( tx_data )
+      tx_data['details'][0]['amount']
     end
 
     def create_payment( txid, address, amount, tx_data )
@@ -29,13 +29,13 @@ module Coingate
       end
     end
 
-    def confirm_payment( payment, tx_data )
+    def confirm_payment( btc_payment, tx_data )
       confirmations = tx_data['confirmations']
 
       return if confirmations == 0
 
-      super( payment ) do
-        payment_class[payment.id].update( :confirmations => tx_data['confirmations'] )
+      super( btc_payment.payment ) do
+        btc_payment.update( :confirmations => tx_data['confirmations'] )
       end
     end
 

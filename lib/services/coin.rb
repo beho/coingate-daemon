@@ -27,13 +27,16 @@ module Coingate
       )
     end
 
-    def create_or_confirm_payment( txid, address, amount, tx_data )
-      altcoin_tx = tx_class.first( txid: txid )
+    def create_or_confirm_payment( txid, tx_data )
+      altcoin_payment = payment_class.first( txid: txid )
 
-      if altcoin_tx.nil?
+      if altcoin_payment.nil?
+        address = tx_receiving_address( tx_data )
+        amount = tx_amount( tx_data )
+
         create_payment( txid, address, amount, tx_data )
       else
-        confirm_payment( altcoin_tx.payment, tx_data )
+        confirm_payment( altcoin_payment, tx_data )
       end
     end
 

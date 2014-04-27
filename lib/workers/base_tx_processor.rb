@@ -5,7 +5,7 @@ class BaseTxProcessor
     coin = Coingate::Coin.for( self.class.altcoin )
     tx_data = coin.get_tx_data( txid )
 
-    coin.create_or_confirm_transaction( txid ) if coin.is_received_tx?( tx_data )
+    coin.create_or_confirm_transaction( txid ) if coin.tx_is_received?( tx_data )
 
     ack!
   end
