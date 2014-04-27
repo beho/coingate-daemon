@@ -3,6 +3,19 @@ module API
 
   class Customers < Grape::API
 
+    helpers do
+      def current_customer
+        @current_customer ||= Customer[params[:customer_id]] || error!('Not found', 404)
+      end
+
+      def since_until_params
+        since_timepoint = params[:since] ? Time.parse( params[:since] ) : nil
+        until_timepoint = params[:until] ? Time.parse( params[:until] ) : nil
+
+        [since_timepoint, until_timepoint]
+      end
+    end
+
     resources :customers do
 
       params do
@@ -22,13 +35,10 @@ module API
               optional :office_id, type: Integer, desc: 'Office id'
             end
             get do
-              customer = Customer[params[:customer_id]]
-              error!(404, 'Not found') unless customer
-
               altcoin = params[:altcoin]
               office_id = params[:office_id]
 
-              wallets = customer.wallets_dataset
+              wallets = current_customer.wallets_dataset
               wallets = wallets.where( incoming_currency_id: altcoin.upcase ) if altcoin
               wallets = wallets.where( office_id: params[:office_id] ) if office_id
 
@@ -58,17 +68,11 @@ module API
         end
 
         get 'fee' do
-          customer = Customer[params[:customer_id]]
-          error!(404, 'Not found') unless customer
-
-          customer.fee_percent.to_f
+          current_customer.fee_percent.to_f
         end
 
         get 'balance' do
-          customer = Customer[params[:customer_id]]
-          error!(404, 'Not found') unless customer
-
-          customer.balance.to_f
+          current_customer.balance.to_f
         end
 
         params do
@@ -78,24 +82,19 @@ module API
         end
         resource 'incomes' do
           get do
-            customer = Customer[params[:customer_id]]
-            error!(404, 'Not found') unless customer
-
             office_id = params[:office_id]
-            since_timepoint = params[:since] ? Time.parse( params[:since] ) : nil
-            until_timepoint = params[:until] ? Time.parse( params[:until] ) : nil
+            since_timepoint, until_timepoint = since_until_params
 
-            incomes = customer.transactions_dataset.incomes
-            incomes = incomes.in_time_interval( since_timepoint, until_timepoint )
+            incomes = current_customer.incomes_dataset
+              .in_time_interval( since_timepoint, until_timepoint )
 
             source_amount, target_amount = incomes.amount_sums
 
             incomes = incomes.where( office_id: office_id ) if office_id
-            offices = incomes
-              .group(:office_id)
-              .select_append { sum(target_amount).as(target) }
-              .select_append { sum(source_amount).as(source) }
-              .map {|o| { office_id: o.office_id, amount: o[:target] } }
+            offices = incomes.amount_sums_by_office_id
+              .map do |o|
+                { office_id: o[:office_id], amount: o[:target_amount_sum] }
+              end
 
             {
               amount: target_amount,
@@ -104,26 +103,20 @@ module API
           end
 
           get ':altcoin' do
-            customer = Customer[params[:customer_id]]
-            error!(404, 'Not found') unless customer
-
             office_id = params[:office_id]
-            since_timepoint = params[:since] ? Time.parse( params[:since] ) : nil
-            until_timepoint = params[:until] ? Time.parse( params[:until] ) : nil
 
-            incomes = customer.transactions_dataset.incomes
-            incomes = incomes.in_time_interval( since_timepoint, until_timepoint )
-            incomes = incomes.where( source_currency_id: params[:altcoin] )
+            since_timepoint, until_timepoint = since_until_params
+
+            incomes = current_customer.incomes_dataset
+              .in_time_interval( since_timepoint, until_timepoint )
+              .where( source_currency_id: params[:altcoin] )
 
             source_amount, target_amount = incomes.amount_sums
 
             incomes = incomes.where( office_id: office_id ) if office_id
-            offices = incomes
-              .group(:office_id)
-              .select_append { sum(target_amount).as(target) }
-              .select_append { sum(source_amount).as(source) }
+            offices = incomes.amount_sums_by_office_id( include_source_amount_sum: true )
               .map do |o|
-                { office_id: o.office_id, amount: o[:target], raw_amount: o[:source] }
+                { office_id: o[:office_id], amount: o[:target_amount_sum], raw_amount: o[:source_amount_sum] }
               end
 
             {
@@ -141,11 +134,11 @@ module API
           optional :office_id
         end
         get 'txs' do
-          since_timepoint = params[:since] ? Time.parse( params[:since] ) : nil
-          until_timepoint = params[:until] ? Time.parse( params[:until] ) : nil
+          customer_id = current_customer.id
+          since_timepoint, until_timepoint = since_until_params
 
           payments = Payment.join(Wallet, :id => :wallet_id)
-            .where( customer_id: params[:customer_id] )
+            .where( customer_id: customer_id )
             .select_all( :payments )
             .order( Sequel.desc(:payments__created_at) )
             .in_time_interval( since_timepoint, until_timepoint )
@@ -167,7 +160,6 @@ module API
 
       end
 
-      # change fee
     end
 
   end

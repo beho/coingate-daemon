@@ -35,4 +35,8 @@ class Customer < Sequel::Model(:customers)
       )
     end
   end
+
+  def incomes_dataset
+    transactions_dataset.incomes
+  end
 end

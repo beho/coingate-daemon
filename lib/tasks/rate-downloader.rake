@@ -5,4 +5,8 @@ namespace :cron do
     Rate.multi_insert( Rate::Puller.new.pull_all )
   end
 
+  desc 'Enqueue all all incoming transactions in case something went wrong with walletnotify'
+  task :txs do
+  end
+
 end
