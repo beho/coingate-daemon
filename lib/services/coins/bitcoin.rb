@@ -25,31 +25,6 @@ module Coingate
         payment_class.create( payment_id: payment.id, txid: tx.txid )
       end
     end
-
-    # def confirm_payment( btc_payment, tx )
-    #   if tx.confirmations > 0
-    #     super( btc_payment.payment ) do
-    #       btc_payment.update( :confirmations => tx.confirmations )
-    #     end
-    #   end
-    # end
-
-
-    # class Tx < Coin::Tx
-    #   def self.get( txid )
-    #     self.new( Interop.btc.gettransaction( txid ) )
-    #   end
-
-    #   def initialize( tx_data )
-    #     details = tx_data['details'][0]
-
-    #     @txid = tx_data['txid']
-    #     @received = details['category'] == 'receive'
-    #     @address = details['address']
-    #     @amount = details['amount']
-    #   end
-    # end
-
   end
 
 end

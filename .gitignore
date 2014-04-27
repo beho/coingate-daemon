@@ -2,3 +2,4 @@
 coingate-daemon.db
 Gemfile.lock
 log/*
+spec/coverage

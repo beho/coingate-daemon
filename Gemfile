@@ -17,6 +17,7 @@ group :development do
   gem 'sqlite3'
 
   gem 'rspec', '~> 3.0.0.beta2'
+  gem 'simplecov', require: false
 end
 
 group :production do
