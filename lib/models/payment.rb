@@ -24,10 +24,11 @@ class Payment < Sequel::Model( :payments )
 
     source_income, source_fee = split_source_amount
 
-    income_transaction = wallet.customer.create_transaction( source_currency_id, source_income, rate, office_id )
-    fee_transaction = system.create_transaction( source_currency_id, source_fee, rate )
+    self.transaction = wallet.customer.create_transaction( source_currency_id, source_income, rate, office_id )
+    self.fee_transaction = system.create_transaction( source_currency_id, source_fee, rate ) if fee_percent > 0
+    self.confirmed_at = Time.now.utc
 
-    update( transaction_id: income_transaction.id, fee_transaction_id: fee_transaction.id, confirmed_at: Time.now.utc )
+    save_changes
   end
 
   def customer_percent

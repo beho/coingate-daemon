@@ -16,7 +16,7 @@ group :development do
   gem 'rubocop'
   gem 'sqlite3'
 
-  gem 'minitest'
+  gem 'rspec', '~> 3.0.0.beta2'
 end
 
 group :production do

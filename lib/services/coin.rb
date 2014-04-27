@@ -18,7 +18,7 @@ module Coingate
 
 
     def create_wallet( customer, office_id, address = nil )
-      wallet = Wallet.create(
+      Wallet.create(
         customer_id: customer.id,
         office_id: office_id,
         incoming_currency_id: currency_id,
@@ -27,44 +27,39 @@ module Coingate
       )
     end
 
-    def create_or_confirm_payment( txid, tx_data )
-      altcoin_payment = payment_class.first( txid: txid )
+    def get_tx_and_process( txid )
+      tx = tx( txid )
 
-      if altcoin_payment.nil?
-        address = tx_receiving_address( tx_data )
-        amount = tx_amount( tx_data )
-
-        create_payment( txid, address, amount, tx_data )
-      else
-        confirm_payment( altcoin_payment, tx_data )
-      end
+      create_or_confirm_payment( tx )
     end
 
-    def create_payment( txid, address, amount, &block )
-      wallet = Wallet.first( address: address )
-      rate = Rate.current( currency_id, wallet.stored_currency_id ).value
+    def process( tx )
+      return unless tx.received?
+
+      altcoin_payment = payment_class.first( txid: tx.txid )
+
+      payment = altcoin_payment.nil? ? create_payment( tx ) : altcoin_payment.payment
+      payment.confirm! if tx.confirmed?
+
+      payment
+    end
+
+    def create_payment( tx, &block )
+      wallet = Wallet.first( incoming_currency_id: tx.currency_id, address: tx.address )
+      rate = Rate.current( tx.currency_id, wallet.stored_currency_id ).value
       fee_percent = wallet.customer.fee_percent || Settings.fee_percent
 
-      target_amount = rate * amount
+      target_amount = rate * tx.amount
 
       payment = Payment.create(
         wallet_id: wallet.id,
-        source_currency_id: currency_id,
-        source_amount: amount,
+        source_currency_id: wallet.incoming_currency_id,
+        source_amount: tx.amount,
         target_currency_id: wallet.stored_currency_id,
         target_amount: target_amount,
         rate: rate,
         fee_percent: fee_percent
       )
-
-      block.call( payment )
-
-      payment
-    end
-
-
-    def confirm_payment( payment, &block )
-      payment.confirm! unless payment.confirmed?
 
       block.call( payment )
 
@@ -78,6 +73,27 @@ module Coingate
           define_method( :currency_id ) { currency_id.to_s }
           define_method( :payment_class ) { payment_class }
         # end
+      end
+    end
+
+    class Tx
+      attr_reader :currency_id, :txid, :address, :amount
+
+      def initialize( currency_id, txid, address, amount, received, confirmed )
+        @currency_id = currency_id
+        @txid = txid
+        @address = address
+        @amount = amount
+        @received = received
+        @confirmed = confirmed
+      end
+
+      def received?
+        @received
+      end
+
+      def confirmed?
+        @confirmed
       end
     end
 

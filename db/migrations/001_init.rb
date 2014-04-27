@@ -43,15 +43,35 @@ Sequel.migration do
       foreign_key :incoming_currency_id, :currencies, type: 'char(3)'
       String :address, size: 64
 
-      # BigDecimal :incoming_amount, size: [19, 8], default: 0
-
       foreign_key :stored_currency_id, :currencies, type: 'char(3)'
-      # BigDecimal :stored_amount, size: [19, 8], default: 0
 
       DateTime :created_at
       DateTime :updated_at
 
       index [:customer_id, :office_id, :incoming_currency_id]
+      index [:incoming_currency_id, :address]
+    end
+
+    create_table :transactions do
+      primary_key :id
+
+      foreign_key :customer_id, :customers
+      Integer :office_id
+
+      foreign_key :source_currency_id, :currencies, type: 'char(3)'
+      BigDecimal :source_amount, size: [19, 8]
+
+      foreign_key :target_currency_id, :currencies, type: 'char(3)'
+      BigDecimal :target_amount, size: [19, 8]
+
+      BigDecimal :rate, size: [19, 4]
+
+      BigDecimal :source_balance, size: [19, 8]
+      BigDecimal :target_balance, size: [19, 8]
+
+      DateTime :created_at
+
+      index [:customer_id, :office_id, :source_currency_id]
     end
 
     create_table :payments do
@@ -88,28 +108,6 @@ Sequel.migration do
       foreign_key :updated_at
     end
 
-    create_table :transactions do
-      primary_key :id
-
-      foreign_key :customer_id, :customers
-      Integer :office_id
-
-      foreign_key :source_currency_id, :currencies, type: 'char(3)'
-      BigDecimal :source_amount, size: [19, 8]
-
-      foreign_key :target_currency_id, :currencies, type: 'char(3)'
-      BigDecimal :target_amount, size: [19, 8]
-
-      BigDecimal :rate, size: [19, 4]
-
-      BigDecimal :source_balance, size: [19, 8]
-      BigDecimal :target_balance, size: [19, 8]
-
-      DateTime :created_at
-
-      index [:customer_id, :office_id]
-    end
-
     create_join_table(:withdrawal_id => :withdrawals, :transaction_id => :transactions)
 
     create_table :settings do
@@ -122,6 +120,15 @@ Sequel.migration do
   end
 
   down do
-    drop_table(:settings, :transactions_withdrawals, :transactions, :withdrawals, :payments, :wallets, :rates, :customers, :markets, :currencies)
+    drop_table(:settings)
+    drop_table(:transactions_withdrawals)
+    drop_table(:withdrawals)
+    drop_table(:payments)
+    drop_table(:transactions)
+    drop_table(:wallets)
+    drop_table(:rates)
+    drop_table(:customers)
+    drop_table(:markets)
+    drop_table(:currencies)
   end
 end

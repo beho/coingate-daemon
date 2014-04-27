@@ -7,37 +7,48 @@ module Coingate
       Interop.btc.getnewaddress
     end
 
-    def get_tx_data( txid )
-      Interop.btc.gettransaction( txid )
+    def tx( txid )
+      tx_data = Interop.btc.gettransaction( txid )
+
+      details = tx_data['details'][0]
+
+      received = details['category'] == 'receive'
+      address = details['address']
+      amount = details['amount']
+      confirmed = tx_data['confirmations'] > 0
+
+      Tx.new( currency_id, txid, address, amount, received, confirmed )
     end
 
-    def tx_is_received?( tx_data )
-      tx_data['details'][0]['category'] == 'receive'
-    end
-
-    def tx_receiving_address( tx_data )
-      tx_data['details'][0]['address']
-    end
-
-    def tx_amount( tx_data )
-      tx_data['details'][0]['amount']
-    end
-
-    def create_payment( txid, address, amount, tx_data )
-      super( txid, address, amount ) do |tx|
-        payment_class.create( payment_id: tx.id, txid: txid, confirmations: tx_data['confirmations'] )
+    def create_payment( tx )
+      super( tx ) do |payment|
+        payment_class.create( payment_id: payment.id, txid: tx.txid )
       end
     end
 
-    def confirm_payment( btc_payment, tx_data )
-      confirmations = tx_data['confirmations']
+    # def confirm_payment( btc_payment, tx )
+    #   if tx.confirmations > 0
+    #     super( btc_payment.payment ) do
+    #       btc_payment.update( :confirmations => tx.confirmations )
+    #     end
+    #   end
+    # end
 
-      return if confirmations == 0
 
-      super( btc_payment.payment ) do
-        btc_payment.update( :confirmations => tx_data['confirmations'] )
-      end
-    end
+    # class Tx < Coin::Tx
+    #   def self.get( txid )
+    #     self.new( Interop.btc.gettransaction( txid ) )
+    #   end
+
+    #   def initialize( tx_data )
+    #     details = tx_data['details'][0]
+
+    #     @txid = tx_data['txid']
+    #     @received = details['category'] == 'receive'
+    #     @address = details['address']
+    #     @amount = details['amount']
+    #   end
+    # end
 
   end
 
