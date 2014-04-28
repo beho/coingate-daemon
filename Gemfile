@@ -13,7 +13,10 @@ gem 'foreman', '~> 0.63.0'
 group :development do
   # gem 'wirble'
   # gem 'pry-plus'
-  gem 'rubocop'
+
+  gem 'capistrano', '~> 3.2.1'
+
+  gem 'rubocop', require: false
   gem 'sqlite3'
 
   gem 'rspec', '~> 3.0.0.beta2'

@@ -3,3 +3,6 @@ coingate-daemon.db
 Gemfile.lock
 log/*
 spec/coverage
+config/database.yml
+config/interop.yml
+config/rabbitmq.yml
