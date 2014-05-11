@@ -1,7 +1,7 @@
 .bundle
 coingate-daemon.db
-Gemfile.lock
 log/*
+tmp/*
 spec/coverage
 config/database.yml
 config/interop.yml

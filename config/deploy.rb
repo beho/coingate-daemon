@@ -20,7 +20,7 @@ set :scm, :git
 # set :log_level, :debug
 
 # Default value for :pty is false
-set :pty, true
+# set :pty, true
 
 # Default value for :linked_files is []
 set :linked_files, %w{config/database.yml config/interop.yml config/rabbitmq.yml}
@@ -36,6 +36,14 @@ set :linked_files, %w{config/database.yml config/interop.yml config/rabbitmq.yml
 
 namespace :deploy do
 
+  desc 'Migrate database'
+  task :migrate do
+    on roles(:db), in: :sequence, wait: 5 do
+      execute :rake, 'db:migrate'
+      execute :rake, 'db:seed'
+    end
+  end
+
   desc 'Restart application'
   task :restart do
     on roles(:app), in: :sequence, wait: 5 do
@@ -45,14 +53,15 @@ namespace :deploy do
   end
 
   after :publishing, :restart
+  after :updated, :migrate
 
-  after :restart, :clear_cache do
-    on roles(:web), in: :groups, limit: 3, wait: 10 do
+  # after :restart, :clear_cache do
+  #   on roles(:web), in: :groups, limit: 3, wait: 10 do
       # Here we can do anything such as:
       # within release_path do
       #   execute :rake, 'cache:clear'
       # end
-    end
-  end
+  #   end
+  # end
 
 end

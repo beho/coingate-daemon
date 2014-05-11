@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+gem 'rake'
 gem 'json', '~> 1.8.1'
 gem 'rest-client', '~> 1.6.7'
 gem 'sequel', '~> 4.7.0'
@@ -15,6 +16,7 @@ group :development do
   # gem 'pry-plus'
 
   gem 'capistrano', '~> 3.2.1'
+  gem 'capistrano-bundler', '~> 1.1.2'
 
   gem 'rubocop', require: false
   gem 'sqlite3'
