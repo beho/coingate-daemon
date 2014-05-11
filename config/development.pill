@@ -1,4 +1,4 @@
-Bluepill.application("coingate-dameon", :foreground => false, :log_file => "/var/log/bluepill.log") do |app|
+Bluepill.application("coingate-dameon", :foreground => true) do |app|
 
   app.uid = "coingate"
   app.gid = "coingate"
@@ -9,13 +9,13 @@ Bluepill.application("coingate-dameon", :foreground => false, :log_file => "/var
   app.process("api-1") do |process|
     process.start_command = "./bin/web_api_server.sh"
 
-    process.working_dir = "/coingate/coingate-daemon/current"
+    process.working_dir = "/Volumes/Storage/Projects/coingate/coingate-daemon"
     process.daemonize = true
     process.environment = {"PORT"=>"5000"}
     process.stop_signals = [:quit, 30.seconds, :term, 5.seconds, :kill]
     process.stop_grace_time = 45.seconds
 
-    process.stdout = process.stderr = "/coingate/coingate-daemon/shared/log/coingate-daemon/coingate-dameon-api-1.log"
+    process.stdout = process.stderr = "log/coingate-daemon/coingate-dameon-api-1.log"
 
     process.monitor_children do |children|
       children.stop_command "kill {{PID}}"
@@ -30,13 +30,13 @@ Bluepill.application("coingate-dameon", :foreground => false, :log_file => "/var
   app.process("tx_process-1") do |process|
     process.start_command = "./bin/tx_processor.sh"
 
-    process.working_dir = "/coingate/coingate-daemon/current"
+    process.working_dir = "/Volumes/Storage/Projects/coingate/coingate-daemon"
     process.daemonize = true
     process.environment = {"PORT"=>"5100"}
     process.stop_signals = [:quit, 30.seconds, :term, 5.seconds, :kill]
     process.stop_grace_time = 45.seconds
 
-    process.stdout = process.stderr = "/coingate/coingate-daemon/shared/log/coingate-dameon-tx_process-1.log"
+    process.stdout = process.stderr = "log/coingate-daemon/coingate-dameon-tx_process-1.log"
 
     process.monitor_children do |children|
       children.stop_command "kill {{PID}}"
@@ -51,13 +51,13 @@ Bluepill.application("coingate-dameon", :foreground => false, :log_file => "/var
   app.process("tx_server-1") do |process|
     process.start_command = "./bin/tx_server.sh"
 
-    process.working_dir = "/coingate/coingate-daemon/current"
+    process.working_dir = "/Volumes/Storage/Projects/coingate/coingate-daemon"
     process.daemonize = true
     process.environment = {"PORT"=>"5200"}
     process.stop_signals = [:quit, 30.seconds, :term, 5.seconds, :kill]
     process.stop_grace_time = 45.seconds
 
-    process.stdout = process.stderr = "/coingate/coingate-daemon/shared/log/coingate-dameon-tx_server-1.log"
+    process.stdout = process.stderr = "log/coingate-daemon/coingate-dameon-tx_server-1.log"
 
     process.monitor_children do |children|
       children.stop_command "kill {{PID}}"
