@@ -28,6 +28,8 @@ set :linked_files, %w{config/database.yml config/interop.yml config/rabbitmq.yml
 # Default value for linked_dirs is []
 set :linked_dirs, %w{log tmp vendor/bundle}
 
+set :bundle_bins, fetch(:bundle_bins, []).push( 'bluepill' )
+
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
 
@@ -49,9 +51,7 @@ namespace :deploy do
   desc 'Restart application'
   task :restart do
     on roles(:daemon), in: :sequence, wait: 5 do
-      within release_path do
-        invoke 'bluepill:restart'
-      end
+      invoke 'bluepill:start'
     end
   end
 
