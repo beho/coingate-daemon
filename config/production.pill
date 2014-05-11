@@ -1,4 +1,4 @@
-Bluepill.application("coingate-dameon", :foreground => false, :log_file => "/var/log/bluepill.log") do |app|
+Bluepill.application("coingate-daemon", :foreground => false, :log_file => "/var/log/bluepill.log") do |app|
 
   app.uid = "coingate"
   app.gid = "coingate"
@@ -11,17 +11,17 @@ Bluepill.application("coingate-dameon", :foreground => false, :log_file => "/var
 
     process.working_dir = "/coingate/coingate-daemon/current"
     process.daemonize = true
-    process.environment = {"PORT"=>"5000"}
+    process.environment = {"PORT"=>"5000", 'RACK_ENV' => 'production'}
     process.stop_signals = [:quit, 30.seconds, :term, 5.seconds, :kill]
     process.stop_grace_time = 45.seconds
 
-    process.stdout = process.stderr = "/coingate/coingate-daemon/shared/log/coingate-daemon/coingate-dameon-api-1.log"
+    process.stdout = process.stderr = "/coingate/coingate-daemon/shared/log/coingate-daemon/coingate-daemon-api-1.log"
 
     process.monitor_children do |children|
       children.stop_command "kill {{PID}}"
     end
 
-    process.group = "coingate-dameon-api"
+    process.group = "coingate-daemon-api"
   end
 
 
@@ -32,17 +32,17 @@ Bluepill.application("coingate-dameon", :foreground => false, :log_file => "/var
 
     process.working_dir = "/coingate/coingate-daemon/current"
     process.daemonize = true
-    process.environment = {"PORT"=>"5100"}
+    process.environment = {"PORT"=>"5100", 'RACK_ENV' => 'production'}
     process.stop_signals = [:quit, 30.seconds, :term, 5.seconds, :kill]
     process.stop_grace_time = 45.seconds
 
-    process.stdout = process.stderr = "/coingate/coingate-daemon/shared/log/coingate-dameon-tx_process-1.log"
+    process.stdout = process.stderr = "/coingate/coingate-daemon/shared/log/coingate-daemon-tx_process-1.log"
 
     process.monitor_children do |children|
       children.stop_command "kill {{PID}}"
     end
 
-    process.group = "coingate-dameon-tx_process"
+    process.group = "coingate-daemon-tx_process"
   end
 
 
@@ -53,17 +53,17 @@ Bluepill.application("coingate-dameon", :foreground => false, :log_file => "/var
 
     process.working_dir = "/coingate/coingate-daemon/current"
     process.daemonize = true
-    process.environment = {"PORT"=>"5200"}
+    process.environment = {"PORT"=>"5200", 'RACK_ENV' => 'production'}
     process.stop_signals = [:quit, 30.seconds, :term, 5.seconds, :kill]
     process.stop_grace_time = 45.seconds
 
-    process.stdout = process.stderr = "/coingate/coingate-daemon/shared/log/coingate-dameon-tx_server-1.log"
+    process.stdout = process.stderr = "/coingate/coingate-daemon/shared/log/coingate-daemon-tx_server-1.log"
 
     process.monitor_children do |children|
       children.stop_command "kill {{PID}}"
     end
 
-    process.group = "coingate-dameon-tx_server"
+    process.group = "coingate-daemon-tx_server"
   end
 
 
