@@ -137,15 +137,14 @@ module API
           customer_id = current_customer.id
           since_timepoint, until_timepoint = since_until_params
 
-          payments = Payment.join(Wallet, :id => :wallet_id)
+          payments = Payment.eager_graph( :wallet )
             .where( customer_id: customer_id )
-            .select_all( :payments )
             .order( Sequel.desc(:payments__created_at) )
             .in_time_interval( since_timepoint, until_timepoint )
 
           payments = payments.where( office_id: params[:office_id] ) if params[:office_id]
 
-          payments.map do |p|
+          payments.all.map do |p|
             customer_amounts = p.customer_amounts
 
             {
