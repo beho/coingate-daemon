@@ -30,7 +30,7 @@ module Coingate
     def get_tx_and_process( txid )
       tx = tx( txid )
 
-      create_or_confirm_payment( tx )
+      process( tx )
     end
 
     def process( tx )
@@ -45,7 +45,9 @@ module Coingate
     end
 
     def create_payment( tx, &block )
-      wallet = Wallet.first( incoming_currency_id: tx.currency_id, address: tx.address )
+      wallet = Wallet.first( incoming_currency_id: tx.currency_id, address: tx.address ) ||
+        Settings.system_customer.wallets_dataset.first( incoming_currency_id: tx.currency_id )
+
       rate = Rate.current( tx.currency_id, wallet.stored_currency_id ).value
       fee_percent = wallet.customer.fee_percent || Settings.fee_percent
 

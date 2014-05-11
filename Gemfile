@@ -7,7 +7,11 @@ gem 'sequel', '~> 4.7.0'
 gem 'grape', '~> 0.6.1'
 gem 'whenever', '~> 0.9.0', require: false
 gem 'puma' # , '~> 2.7.1'
-gem 'bitcoin-client'
+
+# version in rubygems can't listtransactions count, from
+# https://github.com/stdyun/bitcoin-client/commit/2242ce05edb000d23e29c3c44c616e6166bbe122
+gem 'bitcoin-client', :git => 'git://github.com/stdyun/bitcoin-client.git'
+
 gem 'sneakers', '~> 0.1.1.pre' # frenzy_bunnies if JRuby
 gem 'foreman', '~> 0.63.0'
 gem 'bluepill', '~> 0.0.67'

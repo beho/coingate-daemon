@@ -117,9 +117,15 @@ Sequel.migration do
       BigDecimal :fee_percent, size: [19, 4]
     end
 
+    create_table :transaction_checkpoints do
+      foreign_key :currency_id, :currencies, type: 'char(3)', primary_key: true
+      Integer :timestamp
+    end
+
   end
 
   down do
+    drop_table(:transaction_checkpoints)
     drop_table(:settings)
     drop_table(:transactions_withdrawals)
     drop_table(:withdrawals)

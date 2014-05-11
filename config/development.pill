@@ -14,7 +14,7 @@ Bluepill.application("coingate-daemon", :foreground => true) do |app|
     process.stop_signals = [:quit, 30.seconds, :term, 5.seconds, :kill]
     process.stop_grace_time = 45.seconds
 
-    process.stdout = process.stderr = "log/coingate-daemon/coingate-daemon-api-1.log"
+    process.stdout = process.stderr = "log/coingate-daemon/web_api_server-1.log"
 
     process.monitor_children do |children|
       children.stop_command "kill {{PID}}"
@@ -26,7 +26,7 @@ Bluepill.application("coingate-daemon", :foreground => true) do |app|
 
 
 
-  app.process("tx_process-1") do |process|
+  app.process("tx_processor-1") do |process|
     process.start_command = "./bin/tx_processor.sh"
 
     process.working_dir = "/Volumes/Storage/Projects/coingate/coingate-daemon"
@@ -35,13 +35,13 @@ Bluepill.application("coingate-daemon", :foreground => true) do |app|
     process.stop_signals = [:quit, 30.seconds, :term, 5.seconds, :kill]
     process.stop_grace_time = 45.seconds
 
-    process.stdout = process.stderr = "log/coingate-daemon/coingate-daemon-tx_process-1.log"
+    process.stdout = process.stderr = "log/coingate-daemon/tx_processor-1.log"
 
     process.monitor_children do |children|
       children.stop_command "kill {{PID}}"
     end
 
-    process.group = "coingate-daemon-tx_process"
+    process.group = "coingate-daemon-tx_processor"
   end
 
 
@@ -56,7 +56,7 @@ Bluepill.application("coingate-daemon", :foreground => true) do |app|
     process.stop_signals = [:quit, 30.seconds, :term, 5.seconds, :kill]
     process.stop_grace_time = 45.seconds
 
-    process.stdout = process.stderr = "log/coingate-daemon/coingate-daemon-tx_server-1.log"
+    process.stdout = process.stderr = "log/coingate-daemon/tx_server-1.log"
 
     process.monitor_children do |children|
       children.stop_command "kill {{PID}}"

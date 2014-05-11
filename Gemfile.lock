@@ -1,3 +1,10 @@
+GIT
+  remote: git://github.com/stdyun/bitcoin-client.git
+  revision: 602f2e0dad963d128e624b2e153d86b41349079a
+  specs:
+    bitcoin-client (0.0.3)
+      rest-client
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -13,8 +20,6 @@ GEM
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
-    bitcoin-client (0.0.3)
-      rest-client
     blue-daemons (1.1.11)
     bluepill (0.0.67)
       activesupport (>= 3, < 4.1)
@@ -142,7 +147,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bitcoin-client
+  bitcoin-client!
   bluepill (~> 0.0.67)
   capistrano (~> 3.2.1)
   capistrano-bundler (~> 1.1.2)

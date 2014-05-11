@@ -29,4 +29,11 @@ end
 if Customer.empty?
   system = Customer.create( id: 0, name: 'coingate', currency_id: 'CZK', fee_percent: 0)
   Settings.instance.update( system_customer_id: system.id )
+
+  Wallet.create( customer_id: system.id, incoming_currency_id: 'BTC', stored_currency_id: 'CZK' )
+end
+
+if TransactionCheckpoint.empty?
+  TransactionCheckpoint.import([:currency_id], [
+    ['BTC']])
 end
