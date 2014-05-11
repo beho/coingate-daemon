@@ -6,7 +6,7 @@ Bluepill.application("coingate-daemon", :foreground => false, :log_file => "/var
 
 
 
-  app.process("api-1") do |process|
+  app.process("web_api-1") do |process|
     process.start_command = "./bin/web_api_server.sh"
 
     process.working_dir = "/coingate/coingate-daemon/current"
@@ -15,13 +15,13 @@ Bluepill.application("coingate-daemon", :foreground => false, :log_file => "/var
     process.stop_signals = [:quit, 30.seconds, :term, 5.seconds, :kill]
     process.stop_grace_time = 45.seconds
 
-    process.stdout = process.stderr = "/coingate/coingate-daemon/shared/log/coingate-daemon-api-1.log"
+    process.stdout = process.stderr = "/coingate/coingate-daemon/shared/log/coingate-daemon-web_api_server-1.log"
 
     process.monitor_children do |children|
       children.stop_command "kill {{PID}}"
     end
 
-    process.group = "coingate-daemon-api"
+    process.group = "coingate-daemon-web_api_server"
   end
 
 
