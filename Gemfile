@@ -10,6 +10,7 @@ gem 'puma' # , '~> 2.7.1'
 gem 'bitcoin-client'
 gem 'sneakers', '~> 0.1.1.pre' # frenzy_bunnies if JRuby
 gem 'foreman', '~> 0.63.0'
+gem 'bluepill', '~> 0.0.67'
 
 group :development do
   # gem 'wirble'
