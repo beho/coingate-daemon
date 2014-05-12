@@ -53,8 +53,11 @@ namespace :deploy do
   desc 'Restart application'
   task :restart do
     on roles(:daemon), in: :sequence, wait: 5 do
-      invoke 'bluepill:quit'
-      invoke 'bluepill:start'
+      begin # bluepill may not be running, but that is not necessarily an error
+        invoke 'bluepill:quit'
+      ensure
+        invoke 'bluepill:start'
+      end
     end
   end
 
