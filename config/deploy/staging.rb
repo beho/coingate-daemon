@@ -22,8 +22,8 @@ set :default_env, {
   'RACK_ENV' => 'production'
 }
 
-set :whenever_environment, ->{ fetch :rack_env, "production" }
-
+# set :rack_env, :production
+set :environment, :production
 
 # Custom SSH Options
 # ==================

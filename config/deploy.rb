@@ -30,7 +30,9 @@ set :linked_dirs, %w{log tmp vendor/bundle}
 
 set :bundle_bins, fetch(:bundle_bins, []).push( 'bluepill' )
 
+set :environment_variable, 'RACK_ENV'
 set :whenever_roles, ->{ :cron }
+# set :whenever_environment, ->{ 'RACK_ENV=production' }
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
