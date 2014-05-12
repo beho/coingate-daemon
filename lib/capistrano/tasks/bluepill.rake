@@ -19,7 +19,7 @@ namespace :bluepill do
     on roles(:daemon) do
       within release_path do
         # execute :sudo, "bluepill load /coingate/coingate-daemon/current/config/production.pill"
-        execute :bluepill, "--no-privileged", :load, "/coingate/coingate-daemon/current/config/production.pill"
+        execute :bluepill, "--no-privileged", :load, "/coingate/coingate-daemon/current/config/pills/production.pill"
       end
     end
   end

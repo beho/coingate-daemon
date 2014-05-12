@@ -30,6 +30,8 @@ set :linked_dirs, %w{log tmp vendor/bundle}
 
 set :bundle_bins, fetch(:bundle_bins, []).push( 'bluepill' )
 
+set :whenever_roles, ->{ :cron }
+
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
 
@@ -51,6 +53,7 @@ namespace :deploy do
   desc 'Restart application'
   task :restart do
     on roles(:daemon), in: :sequence, wait: 5 do
+      invoke 'bluepill:quit'
       invoke 'bluepill:start'
     end
   end

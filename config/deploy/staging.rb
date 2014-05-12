@@ -16,11 +16,13 @@
 # server list. The second argument is a, or duck-types, Hash and is
 # used to set extended properties on the server.
 
-server 'coingate.lan', user: 'coingate', roles: %w{db daemon}
+server 'coingate.lan', user: 'coingate', roles: %w{db daemon cron}
 
 set :default_env, {
   'RACK_ENV' => 'production'
 }
+
+set :whenever_environment, ->{ fetch :rack_env, "production" }
 
 
 # Custom SSH Options

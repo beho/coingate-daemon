@@ -11,11 +11,13 @@ namespace :cron do
     btc = Coingate::Bitcoin.new
 
     checkpoint = TransactionCheckpoint['BTC']
+    timestamp = checkpoint.timestamp
 
-    count = 10
+    page_size = 10
     offset = 0
+    count = 0
 
-    txs_data = btc_interop.listtransactions("", count, offset) # for default account
+    txs_data = btc_interop.listtransactions( "", page_size, offset ) # for default account
 
     if !txs_data.empty?
       latest = txs_data.map {|tx_data| tx_data['time'] }.max
@@ -24,23 +26,24 @@ namespace :cron do
     done = false
     while !txs_data.empty? && !done
       txs_data.select {|tx_data| tx_data['category'] == 'receive' }.each do |tx_data|
-        if checkpoint.timestamp.nil? || tx_data['time'] >= checkpoint.timestamp
-          # puts "#{tx_data['time']} >= #{checkpoint.timestamp}"
+        if timestamp.nil? || tx_data['time'] >= timestamp
+          count += 1
           btc.get_tx_and_process( tx_data['txid'] )
         end
       end
 
       min_in_block = txs_data.map{|tx_data| tx_data['time'] }.min
 
-      if !checkpoint.timestamp.nil? && min_in_block < checkpoint.timestamp
+      if !timestamp.nil? && min_in_block < timestamp
         done = true
         break
       end
 
-      # puts "#{count} #{offset} #{txs_data.empty?}"
-      offset += count
-      txs_data = btc_interop.listtransactions("", count, offset)
+      offset += page_size
+      txs_data = btc_interop.listtransactions("", page_size, offset)
     end
+
+    puts "[#{Time.now}] reprocessed #{count} BTC transactions received since checkpoint #{timestamp}"
 
     checkpoint.update( timestamp: latest ) if latest
   end
