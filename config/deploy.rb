@@ -55,6 +55,7 @@ namespace :deploy do
     on roles(:daemon), in: :sequence, wait: 5 do
       begin # bluepill may not be running, but that is not necessarily an error
         invoke 'bluepill:quit'
+      rescue
       ensure
         invoke 'bluepill:start'
       end
