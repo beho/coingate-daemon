@@ -5,7 +5,7 @@
 
 # Example:
 #
-set :output, "/path/to/my/cron_log.log"
+set :output, "/coingate/coingate-daemon/shared/log/cron.log"
 set :environment_variable, 'RACK_ENV'
 #
 # every 2.hours do
