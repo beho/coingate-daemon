@@ -7,10 +7,8 @@ set :repo_url, 'ssh://git@coingate.lan/project/repositories/coingate-daemon.git'
 # Default branch is :master
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
 
-# Default deploy_to directory is /var/www/my_app
 set :deploy_to, '/coingate/coingate-daemon'
 
-# Default value for :scm is :git
 set :scm, :git
 
 # Default value for :format is :pretty
@@ -30,7 +28,6 @@ set :linked_dirs, %w{log tmp vendor/bundle}
 
 set :bundle_bins, fetch(:bundle_bins, []).push( 'bluepill' )
 
-# set :environment_variable, 'RACK_ENV'
 set :whenever_roles, ->{ :cron }
 
 # Default value for default_env is {}

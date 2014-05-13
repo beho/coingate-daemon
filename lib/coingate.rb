@@ -70,8 +70,6 @@ require_relative 'services/coin'
 require_relative 'services/coins/bitcoin'
 require_relative 'services/interop'
 
-require_relative 'services/interop'
-
 require_relative 'workers/base_tx_processor'
 require_relative 'workers/tx_processors'
 

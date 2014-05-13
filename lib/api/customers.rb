@@ -57,10 +57,10 @@ module API
                 c.currency_id = params[:in]
               end
 
-              wallet, wallet_data = Coingate::Coin.for( altcoin ).create_wallet( customer, params[:office_id] )
+              wallet = Coingate::Coin.for( altcoin ).create_wallet( customer, params[:office_id] )
 
               status 201
-              { id: wallet.id, currency: wallet.incoming_currency_id, address: wallet_data.address }
+              { id: wallet.id, currency: wallet.incoming_currency_id, address: wallet.address }
             end
 
           end
@@ -91,10 +91,13 @@ module API
             source_amount, target_amount = incomes.amount_sums
 
             incomes = incomes.where( office_id: office_id ) if office_id
+
             offices = incomes.amount_sums_by_office_id
               .map do |o|
                 { office_id: o[:office_id], amount: o[:target_amount_sum] }
               end
+
+              puts offices
 
             {
               amount: target_amount,
