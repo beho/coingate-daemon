@@ -2,8 +2,8 @@ class Customer < Sequel::Model(:customers)
   unrestrict_primary_key
 
   one_to_many :wallets
-  one_to_many :payments, :order => :created_at
-  one_to_many :transactions
+  one_to_many :payments
+  one_to_many :transactions, :order => :created_at
 
   plugin :timestamps
 
