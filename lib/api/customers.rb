@@ -68,11 +68,11 @@ module API
         end
 
         get 'fee' do
-          current_customer.fee_percent.to_f
+          { fee: current_customer.fee_percent.to_f }
         end
 
         get 'balance' do
-          current_customer.balance.to_f
+          { currency: current_customer.currency_id, amount: current_customer.balance.to_f }
         end
 
         params do
