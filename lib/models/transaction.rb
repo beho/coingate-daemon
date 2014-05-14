@@ -6,6 +6,10 @@ class Transaction < Sequel::Model( :transactions )
       where { target_amount > 0 }
     end
 
+    def ordered
+      order( :created_at )
+    end
+
     def amount_sums
       sums = get { [sum(source_amount).as(source), sum(target_amount).as(target)] }
 

@@ -3,18 +3,18 @@ class Customer < Sequel::Model(:customers)
 
   one_to_many :wallets
   one_to_many :payments
-  one_to_many :transactions, :order => :created_at
+  one_to_many :transactions
 
   plugin :timestamps
 
   # balance in real currency
   def balance
-    last_transaction = transactions_dataset.last
+    last_transaction = transactions_dataset.ordered.last
     last_transaction ? last_transaction.target_balance : 0
   end
 
   def altcoin_balance( altcoin )
-    last_transaction = transactions_dataset.where( source_currency_id: altcoin ).last
+    last_transaction = transactions_dataset.where( source_currency_id: altcoin ).ordered.last
     last_transaction ? last_transaction.source_balance : 0
   end
 
