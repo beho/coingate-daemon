@@ -18,6 +18,8 @@ class Payment < Sequel::Model( :payments )
   end
 
   def confirm!
+    return if confirmed?
+
     customer = wallet.customer
     office_id = wallet.office_id
     system = Settings.system_customer
