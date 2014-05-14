@@ -10,12 +10,12 @@ class Customer < Sequel::Model(:customers)
   # balance in real currency
   def balance
     last_transaction = transactions_dataset.last
-    last_transaction ? last_transaction.target_amount : 0
+    last_transaction ? last_transaction.target_balance : 0
   end
 
-  def altcoin_balance(altcoin)
+  def altcoin_balance( altcoin )
     last_transaction = transactions_dataset.where( source_currency_id: altcoin ).last
-    last_transaction ? last_transaction.source_amount : 0
+    last_transaction ? last_transaction.source_balance : 0
   end
 
   def create_transaction( source_currency_id, source_amount, rate, office_id = nil )
