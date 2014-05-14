@@ -94,13 +94,13 @@ module API
 
             offices = incomes.amount_sums_by_office_id
               .map do |o|
-                { office_id: o[:office_id], amount: o[:target_amount_sum] }
+                { office_id: o[:office_id], amount: o[:target_amount_sum].to_f }
               end
 
               puts offices
 
             {
-              amount: target_amount,
+              amount: target_amount.to_f,
               offices: offices
             }
           end
@@ -119,12 +119,12 @@ module API
             incomes = incomes.where( office_id: office_id ) if office_id
             offices = incomes.amount_sums_by_office_id( include_source_amount_sum: true )
               .map do |o|
-                { office_id: o[:office_id], amount: o[:target_amount_sum], raw_amount: o[:source_amount_sum] }
+                { office_id: o[:office_id], amount: o[:target_amount_sum].to_f, raw_amount: o[:source_amount_sum].to_f }
               end
 
             {
-              amount: target_amount,
-              raw_amount: source_amount,
+              amount: target_amount.to_f,
+              raw_amount: source_amount.to_f,
               offices: offices
             }
           end
@@ -148,14 +148,14 @@ module API
           payments = payments.where( office_id: params[:office_id] ) if params[:office_id]
 
           payments.all.map do |p|
-            customer_amounts = p.customer_amounts
+            source_amount, target_amount = p.customer_amounts
 
             {
               created_at: p.created_at.iso8601,
-              incoming_currency_id: p.target_currency_id,
-              incoming_amount: customer_amounts[0].to_f,
+              source_currency_id: p.target_currency_id,
+              source_amount: source_amount.to_f,
               confirmed: p.confirmed?,
-              stored_amount: customer_amounts[1].to_f
+              target_amount: target_amount.to_f
             }
           end
         end
