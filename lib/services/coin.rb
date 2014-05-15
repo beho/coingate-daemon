@@ -36,12 +36,14 @@ module Coingate
     def process( tx )
       return unless tx.received?
 
-      altcoin_payment = payment_class.first( txid: tx.txid )
+      Coingate.db.transaction do
+        altcoin_payment = payment_class.first( txid: tx.txid )
 
-      payment = altcoin_payment.nil? ? create_payment( tx ) : altcoin_payment.payment
-      payment.confirm! if tx.confirmed?
+        payment = altcoin_payment.nil? ? create_payment( tx ) : altcoin_payment.payment
+        payment.confirm! if tx.confirmed?
 
-      payment
+        payment
+      end
     end
 
     def create_payment( tx, &block )
