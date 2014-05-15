@@ -94,7 +94,7 @@ module API
 
             offices = incomes.amount_sums_by_office_id
               .map do |o|
-                { id: o[:office_id], amount: o[:target_amount_sum].to_f }
+                { office_id: o[:office_id], amount: o[:target_amount_sum].to_f }
               end
 
               puts offices
@@ -119,7 +119,7 @@ module API
             incomes = incomes.where( office_id: office_id ) if office_id
             offices = incomes.amount_sums_by_office_id( include_source_amount_sum: true )
               .map do |o|
-                { id: o[:office_id], amount: o[:target_amount_sum].to_f, raw_amount: o[:source_amount_sum].to_f }
+                { office_id: o[:office_id], amount: o[:target_amount_sum].to_f, raw_amount: o[:source_amount_sum].to_f }
               end
 
             {
@@ -152,7 +152,7 @@ module API
 
             {
               created_at: p.created_at.iso8601,
-              source_currency_id: p.target_currency_id,
+              source_currency_id: p.source_currency_id,
               source_amount: source_amount.to_f,
               confirmed: p.confirmed?,
               target_amount: target_amount.to_f
