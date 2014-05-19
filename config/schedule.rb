@@ -1,4 +1,4 @@
-set :output, "/coingate/coingate-daemon/shared/log/cron.log"
+set :output, "/coingate/coingated/shared/log/cron.log"
 set :environment_variable, 'RACK_ENV'
 
 # every 1.minutes do
