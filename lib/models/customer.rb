@@ -22,6 +22,9 @@ class Customer < Sequel::Model(:customers)
     target_amount = rate * source_amount
 
     self.class.db.transaction do
+      target_balance = balance
+      source_balance = altcoin_balance( source_currency_id )
+
       Transaction.create(
         customer_id: id,
         office_id: office_id,
@@ -30,8 +33,8 @@ class Customer < Sequel::Model(:customers)
         target_currency_id: currency_id,
         target_amount: target_amount,
         rate: rate,
-        source_balance: altcoin_balance(source_currency_id) + source_amount,
-        target_balance: balance + target_amount
+        source_balance: source_balance + source_amount,
+        target_balance: target_balance + target_amount
       )
     end
   end
