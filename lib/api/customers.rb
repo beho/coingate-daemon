@@ -92,16 +92,23 @@ module API
 
             incomes = incomes.where( office_id: office_id ) if office_id
 
-            offices = incomes.amount_sums_by_office_id
-              .map do |o|
-                { office_id: o[:office_id], amount: o[:target_amount_sum].to_f }
-              end
+            default_incomes_per_office = current_customer.wallets_dataset
+              .select(:id).distinct
+              .map{|o| [o.id, 0] }
 
-              puts offices
+            incomes_per_office = incomes.amount_sums_by_office_id
+              .map{|income| [income[:office_id], income[:target_amount_sum]] }
+
+
+            incomes_array = Hash[default_incomes_per_office].merge( Hash[incomes_per_office] )
+              .map{|k, v| { office_id: k, amount: v.to_f } }
+              # .map do |o|
+              #   { office_id: o[:office_id], amount: o[:target_amount_sum].to_f }
+              # end
 
             {
               amount: target_amount.to_f,
-              offices: offices
+              offices: incomes_array
             }
           end
 
@@ -117,15 +124,21 @@ module API
             source_amount, target_amount = incomes.amount_sums
 
             incomes = incomes.where( office_id: office_id ) if office_id
-            offices = incomes.amount_sums_by_office_id( include_source_amount_sum: true )
-              .map do |o|
-                { office_id: o[:office_id], amount: o[:target_amount_sum].to_f, raw_amount: o[:source_amount_sum].to_f }
-              end
+
+            default_incomes_per_office = current_customer.wallets_dataset
+              .select(:id).distinct
+              .map{|o| [o.id, [0, 0]] }
+
+            incomes_per_office = incomes.amount_sums_by_office_id( include_source_amount_sum: true )
+              .map{|income| [income[:office_id], [income[:target_amount_sum], income[:source_amount_sum]]] }
+
+            incomes_array = Hash[default_incomes_per_office].merge( Hash[incomes_per_office] )
+              .map{|k, v| { office_id: k, amount: v[0].to_f, raw_amount: v[1].to_f } }
 
             {
               amount: target_amount.to_f,
               raw_amount: source_amount.to_f,
-              offices: offices
+              offices: incomes_array
             }
           end
 
