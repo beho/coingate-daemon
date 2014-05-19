@@ -1,13 +1,13 @@
 # config valid only for Capistrano 3.1
 lock '3.2.1'
 
-set :application, 'coingate-daemon'
-set :repo_url, 'ssh://git@coingate.lan/project/repositories/coingate-daemon.git'
+set :application, 'coingated'
+set :repo_url, 'ssh://git@coingate.lan/coingate/repositories/coingate-app.git'
 
 # Default branch is :master
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
 
-set :deploy_to, '/coingate/coingate-daemon'
+set :deploy_to, '/coingate/coingated'
 
 set :scm, :git
 

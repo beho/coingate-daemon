@@ -1,4 +1,4 @@
-Bluepill.application("coingate-daemon", :foreground => false, :log_file => "/var/log/bluepill.log") do |app|
+Bluepill.application("coingated", :foreground => false, :log_file => "/var/log/bluepill.log") do |app|
 
   app.uid = "coingate"
   app.gid = "coingate"
@@ -9,19 +9,19 @@ Bluepill.application("coingate-daemon", :foreground => false, :log_file => "/var
   app.process("web_api_server-1") do |process|
     process.start_command = "./bin/web_api_server.sh"
 
-    process.working_dir = "/coingate/coingate-daemon/current"
+    process.working_dir = "/coingate/coingated/current"
     process.daemonize = true
     process.environment = {'RACK_ENV' => 'production'}
     process.stop_signals = [:quit, 30.seconds, :term, 5.seconds, :kill]
     process.stop_grace_time = 45.seconds
 
-    process.stdout = process.stderr = "/coingate/coingate-daemon/shared/log/web_api_server-1.log"
+    process.stdout = process.stderr = "/coingate/coingated/shared/log/web_api_server-1.log"
 
     process.monitor_children do |children|
       children.stop_command "kill {{PID}}"
     end
 
-    process.group = "coingate-daemon-web_api_server"
+    process.group = "coingated-web_api_server"
   end
 
 
@@ -30,19 +30,19 @@ Bluepill.application("coingate-daemon", :foreground => false, :log_file => "/var
   app.process("tx_processor-1") do |process|
     process.start_command = "./bin/tx_processor.sh"
 
-    process.working_dir = "/coingate/coingate-daemon/current"
+    process.working_dir = "/coingate/coingated/current"
     process.daemonize = true
     process.environment = {'RACK_ENV' => 'production'}
     process.stop_signals = [:quit, 30.seconds, :term, 5.seconds, :kill]
     process.stop_grace_time = 45.seconds
 
-    process.stdout = process.stderr = "/coingate/coingate-daemon/shared/log/tx_processor-1.log"
+    process.stdout = process.stderr = "/coingate/coingated/shared/log/tx_processor-1.log"
 
     process.monitor_children do |children|
       children.stop_command "kill {{PID}}"
     end
 
-    process.group = "coingate-daemon-tx_processor"
+    process.group = "coingated-tx_processor"
   end
 
 
@@ -51,19 +51,19 @@ Bluepill.application("coingate-daemon", :foreground => false, :log_file => "/var
   app.process("tx_server-1") do |process|
     process.start_command = "./bin/tx_server.sh"
 
-    process.working_dir = "/coingate/coingate-daemon/current"
+    process.working_dir = "/coingate/coingated/current"
     process.daemonize = true
     process.environment = {'RACK_ENV' => 'production'}
     process.stop_signals = [:quit, 30.seconds, :term, 5.seconds, :kill]
     process.stop_grace_time = 45.seconds
 
-    process.stdout = process.stderr = "/coingate/coingate-daemon/shared/log/tx_server-1.log"
+    process.stdout = process.stderr = "/coingate/coingated/shared/log/tx_server-1.log"
 
     process.monitor_children do |children|
       children.stop_command "kill {{PID}}"
     end
 
-    process.group = "coingate-daemon-tx_server"
+    process.group = "coingated-tx_server"
   end
 
 
