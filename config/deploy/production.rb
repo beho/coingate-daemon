@@ -10,6 +10,8 @@ set :default_env, {
   'RACK_ENV' => 'production'
 }
 
+set :tmp_dir, "/home/coingate/tmp"
+set :environment, :production
 
 # Custom SSH Options
 # ==================

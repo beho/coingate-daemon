@@ -102,9 +102,6 @@ module API
 
             incomes_array = Hash[default_incomes_per_office].merge( Hash[incomes_per_office] )
               .map{|k, v| { office_id: k, amount: v.to_f } }
-              # .map do |o|
-              #   { office_id: o[:office_id], amount: o[:target_amount_sum].to_f }
-              # end
 
             {
               amount: target_amount.to_f,
