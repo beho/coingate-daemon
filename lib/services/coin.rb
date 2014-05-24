@@ -51,7 +51,7 @@ module Coingate
         Settings.system_customer.wallets_dataset.first( incoming_currency_id: tx.currency_id )
 
       rate = Rate.current( tx.currency_id, wallet.stored_currency_id ).value
-      fee_percent = wallet.customer.fee_percent || Settings.fee_percent
+      fee_percent = wallet.customer.current_fee_percent
 
       target_amount = rate * tx.amount
 
@@ -66,6 +66,8 @@ module Coingate
       )
 
       block.call( payment )
+
+      Coingate.logger.info( "created BTC payment[id: #{payment.id}] for customer[id: #{wallet.customer.id}]" )
 
       payment
     end

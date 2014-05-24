@@ -7,6 +7,10 @@ class Customer < Sequel::Model(:customers)
 
   plugin :timestamps
 
+  def current_fee_percent
+    fee_percent || Settings.fee_percent
+  end
+
   # balance in real currency
   def balance
     last_transaction = transactions_dataset.ordered.last

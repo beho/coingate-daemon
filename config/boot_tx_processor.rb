@@ -1,3 +1,5 @@
+ENV['COINGATE_PROCNAME'] = 'tx_processor'
+
 require_relative 'boot'
 require 'sneakers/runner'
 

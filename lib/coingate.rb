@@ -1,5 +1,7 @@
 require 'refinements'
 
+require_relative 'services/progname_logger'
+
 DB_CONFIG_FILENAME = 'database.yml'
 INTEROP_CONFIG_FILENAME = 'interop.yml'
 RABBITMQ_CONFIG_FILENAME = 'rabbitmq.yml'
@@ -36,13 +38,19 @@ module Coingate
       rabbitmq_full_config.delete(:worker_types)
       @rabbitmq_config = rabbitmq_full_config
 
-      @logger = Logger.new( STDERR )
+      # @logger = Logger.new( STDERR )
+      # @logger_file = File.new( File.join( ENV['COINGATE_ROOT_PATH'], 'log', 'coingate.log' ), File::WRONLY | File::APPEND )
+      # @logger_file.fsync = true
+
+      @logger = PrognameLogger.new( ENV['COINGATE_PROCNAME'] || '?' )
 
       Sequel.default_timezone = :utc
       Sequel::Model.db = db
 
       # Interop.initialize( @interop_config )
       # Coin.initialize
+
+      @logger.info( 'started' )
 
       self
     end

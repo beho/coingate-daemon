@@ -1,3 +1,5 @@
+ENV['COINGATE_PROCNAME'] = 'tx_processor'
+
 require_relative 'boot'
 
 MQ_CONN = Bunny.new

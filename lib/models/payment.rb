@@ -31,6 +31,8 @@ class Payment < Sequel::Model( :payments )
     self.confirmed_at = Time.now.utc
 
     save_changes
+
+    Coingate.logger.info( "confirmed #{source_currency_id} payment[id: #{id}] for customer[id: #{customer.id}]. accounted with fee #{fee_percent.to_f * 100}% ")
   end
 
   def customer_percent

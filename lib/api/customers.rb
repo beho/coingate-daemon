@@ -68,7 +68,7 @@ module API
         end
 
         get 'fee' do
-          { fee: current_customer.fee_percent.to_f }
+          { fee: current_customer.current_fee_percent.to_f }
         end
 
         get 'balance' do
