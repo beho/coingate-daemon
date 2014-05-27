@@ -25,7 +25,7 @@ class Customer < Sequel::Model(:customers)
   def create_transaction( source_currency_id, source_amount, rate, office_id = nil )
     target_amount = rate * source_amount
 
-    self.class.db.transaction do
+    self.class.db.transaction( :isolation => :serializable ) do
       target_balance = balance
       source_balance = altcoin_balance( source_currency_id )
 
