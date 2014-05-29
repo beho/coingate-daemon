@@ -1,4 +1,4 @@
-Bluepill.application("coingate-daemon", :foreground => true) do |app|
+Bluepill.application("coingate-daemon") do |app|
 
   app.uid = "coingate"
   app.gid = "coingate"
@@ -14,7 +14,7 @@ Bluepill.application("coingate-daemon", :foreground => true) do |app|
     process.stop_signals = [:quit, 30.seconds, :term, 5.seconds, :kill]
     process.stop_grace_time = 45.seconds
 
-    process.stdout = process.stderr = "log/coingate-daemon/web_api_server-1.log"
+    process.stdout = process.stderr = "log/web_api_server-1.log"
 
     process.monitor_children do |children|
       children.stop_command "kill {{PID}}"
@@ -35,7 +35,7 @@ Bluepill.application("coingate-daemon", :foreground => true) do |app|
     process.stop_signals = [:quit, 30.seconds, :term, 5.seconds, :kill]
     process.stop_grace_time = 45.seconds
 
-    process.stdout = process.stderr = "log/coingate-daemon/tx_processor-1.log"
+    process.stdout = process.stderr = "log/tx_processor-1.log"
 
     process.monitor_children do |children|
       children.stop_command "kill {{PID}}"
@@ -56,7 +56,7 @@ Bluepill.application("coingate-daemon", :foreground => true) do |app|
     process.stop_signals = [:quit, 30.seconds, :term, 5.seconds, :kill]
     process.stop_grace_time = 45.seconds
 
-    process.stdout = process.stderr = "log/coingate-daemon/tx_server-1.log"
+    process.stdout = process.stderr = "log/tx_server-1.log"
 
     process.monitor_children do |children|
       children.stop_command "kill {{PID}}"

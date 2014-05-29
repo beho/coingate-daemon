@@ -7,9 +7,9 @@ Sequel.migration do
     # end
 
     create_table :btc_payments do
-      foreign_key :payment_id, :payments, primary_key: true
+      String :txid, size: 64, primary_key: true
 
-      String :txid, size: 64, index: true
+      foreign_key :payment_id, :payments, index: true
     end
 
     # create_table :btc_input_addresses do

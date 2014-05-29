@@ -18,21 +18,23 @@ class Payment < Sequel::Model( :payments )
   end
 
   def confirm!
-    return if confirmed?
-
     customer = wallet.customer
     office_id = wallet.office_id
     system = Settings.system_customer
 
     source_income, source_fee = split_source_amount
 
-    self.transaction = wallet.customer.create_transaction( source_currency_id, source_income, rate, office_id )
-    self.fee_transaction = system.create_transaction( source_currency_id, source_fee, rate ) if fee_percent > 0
-    self.confirmed_at = Time.now.utc
+    self.class.db.transaction( :isolation => :serializable, :retry_on => [Sequel::SerializationFailure] ) do
+      return if refresh.confirmed?
 
-    save_changes
+      self.transaction = wallet.customer.create_transaction( source_currency_id, source_income, rate, office_id )
+      self.fee_transaction = system.create_transaction( source_currency_id, source_fee, rate ) if fee_percent > 0
+      self.confirmed_at = Time.now.utc
 
-    Coingate.logger.info( "confirmed #{source_currency_id} payment[id: #{id}] for customer[id: #{customer.id}]. accounted with fee #{fee_percent.to_f * 100}% ")
+      save_changes
+
+      Coingate.logger.info( "confirmed #{source_currency_id} payment[id: #{id}] for customer[id: #{customer.id}]. accounted with fee #{fee_percent.to_f * 100}% ")
+    end
   end
 
   def customer_percent

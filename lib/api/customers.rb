@@ -124,7 +124,7 @@ module API
 
             default_incomes_per_office = current_customer.wallets_dataset
               .select(:id).distinct
-              .map{|o| [o.id, [0, 0]] }
+              .map{|o| [o.office_id, [0, 0]] }
 
             incomes_per_office = incomes.amount_sums_by_office_id( include_source_amount_sum: true )
               .map{|income| [income[:office_id], [income[:target_amount_sum], income[:source_amount_sum]]] }
