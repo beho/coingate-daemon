@@ -12,3 +12,9 @@ module Coingate
 
   end
 end
+
+class BigDecimal
+  def to_json( state = nil )
+    to_s
+  end
+end
