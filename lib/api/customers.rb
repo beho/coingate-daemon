@@ -76,7 +76,7 @@ module API
         end
 
         params do
-          # optional :office_id
+          optional :office_id
           optional :since
           optional :until
         end
@@ -88,33 +88,24 @@ module API
             incomes = current_customer.incomes_dataset
               .in_time_interval( since_timepoint, until_timepoint )
 
-            if office_id.nil?
-              source_amount, target_amount = incomes.amount_sums
+            source_amount, target_amount = incomes.amount_sums
 
-              default_incomes_per_office = current_customer.wallets_dataset
-                .select(:office_id).distinct
-                .map{|o| [o.office_id, 0] }
+            incomes = incomes.where( office_id: office_id ) if office_id
 
-              incomes_per_office = incomes.amount_sums_by_office_id
-                .map{|income| [income[:office_id], income[:target_amount_sum]] }
+            default_incomes_per_office = current_customer.wallets_dataset
+              .select(:office_id).distinct
+              .map{|o| [o.office_id, 0] }
 
+            incomes_per_office = incomes.amount_sums_by_office_id
+              .map{|income| [income[:office_id], income[:target_amount_sum]] }
 
-              incomes_array = Hash[default_incomes_per_office].merge( Hash[incomes_per_office] )
-                .map{|k, v| { office_id: k, amount: v } }
+            incomes_array = Hash[default_incomes_per_office].merge( Hash[incomes_per_office] )
+              .map{|k, v| { office_id: k, amount: v } }
 
-              {
-                amount: target_amount,
-                offices: incomes_array
-              }
-            else
-              office_income = incomes.where( office_id: office_id )
-                .amount_sums_by_office_id
-                .first
-
-              {
-                amount: office_income ? office_income[:target_amount_sum] : 0
-              }
-            end
+            {
+              amount: target_amount,
+              offices: incomes_array
+            }
           end
 
 
@@ -126,34 +117,27 @@ module API
               .in_time_interval( since_timepoint, until_timepoint )
               .where( source_currency_id: params[:altcoin] )
 
-            if office_id.nil?
-              source_amount, target_amount = incomes.amount_sums
+            incomes = incomes.where( office_id: office_id ) if office_id
 
-              default_incomes_per_office = current_customer.wallets_dataset
-                .select(:office_id).distinct
-                .map{|o| [o.office_id, [0, 0]] }
+            source_amount, target_amount = incomes.amount_sums
 
-              incomes_per_office = incomes.amount_sums_by_office_id( include_source_amount_sum: true )
-                .map{|income| [income[:office_id], [income[:target_amount_sum], income[:source_amount_sum]]] }
+            incomes = incomes.where( office_id: office_id ) if office_id
 
-              incomes_array = Hash[default_incomes_per_office].merge( Hash[incomes_per_office] )
-                .map{|k, v| { office_id: k, amount: v[0], raw_amount: v[1] } }
+            default_incomes_per_office = current_customer.wallets_dataset
+              .select(:office_id).distinct
+              .map{|o| [o.office_id, [0, 0]] }
 
-              {
-                amount: target_amount,
-                raw_amount: source_amount,
-                offices: incomes_array
-              }
-            else
-              office_income = incomes.where( office_id: office_id )
-                .amount_sums_by_office_id( include_source_amount_sum: true )
-                .first
+            incomes_per_office = incomes.amount_sums_by_office_id( include_source_amount_sum: true )
+              .map{|income| [income[:office_id], [income[:target_amount_sum], income[:source_amount_sum]]] }
 
-              {
-                amount: office_income ? office_income[:target_amount_sum] : 0,
-                raw_amount: office_income ? office_income[:source_amount_sum] : 0
-              }
-            end
+            incomes_array = Hash[default_incomes_per_office].merge( Hash[incomes_per_office] )
+              .map{|k, v| { office_id: k, amount: v[0], raw_amount: v[1] } }
+
+            {
+              amount: target_amount,
+              raw_amount: source_amount,
+              offices: incomes_array
+            }
           end
 
         end
