@@ -10,7 +10,7 @@ gem 'puma' # , '~> 2.7.1'
 
 # version in rubygems can't listtransactions count, from
 # https://github.com/stdyun/bitcoin-client/commit/2242ce05edb000d23e29c3c44c616e6166bbe122
-gem 'bitcoin-client', :git => 'git://github.com/stdyun/bitcoin-client.git'
+gem 'bitcoin-client', :git => 'git://github.com/beho/bitcoin-client.git'
 
 gem 'sneakers', '~> 0.1.1.pre' # frenzy_bunnies if JRuby
 gem 'foreman', '~> 0.63.0'
