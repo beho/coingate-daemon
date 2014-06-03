@@ -14,7 +14,7 @@ class Payment < Sequel::Model( :payments )
   end
 
   def confirmed?
-    !confirmed_at.nil?
+    status_id == PaymentStatus.confirmed_id
   end
 
   def confirm!
@@ -29,7 +29,7 @@ class Payment < Sequel::Model( :payments )
 
       self.transaction = wallet.customer.create_transaction( source_currency_id, source_income, rate, office_id )
       self.fee_transaction = system.create_transaction( source_currency_id, source_fee, rate ) if fee_percent > 0
-      self.status_id = PaymentStatus.id_for( :confirmed )
+      self.status_id = PaymentStatus.confirmed_id
       self.confirmed_at = Time.now.utc
 
       save_changes
@@ -39,7 +39,7 @@ class Payment < Sequel::Model( :payments )
   end
 
   def invalidate!
-    update( status_id: PaymentStatus.id_for( :invalid ) )
+    update( status_id: PaymentStatus.invalid_id )
     # TODO reverse transactions
   end
 

@@ -64,7 +64,8 @@ module Coingate
         target_currency_id: wallet.stored_currency_id,
         target_amount: target_amount,
         rate: rate,
-        fee_percent: fee_percent
+        fee_percent: fee_percent,
+        status_id: PaymentStatus.pending_id
       )
 
       block.call( payment )
@@ -78,6 +79,12 @@ module Coingate
       checkpoint = Checkpoint[currency_id] || Checkpoint.create( currency_id: currency_id, blockhash: best_block_hash )
       
       process_txs_since( checkpoint )
+    end
+
+    def reprocess_pending_txs
+      Payment.where( source_currency_id: currency_id, status_id: PaymentStatus.pending_id ).all.each do |payment|
+        get_tx_and_process( payment_class.first( payment_id: payment.id ).txid )
+      end
     end
 
     # for defining subclasses

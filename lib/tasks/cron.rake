@@ -7,7 +7,10 @@ namespace :cron do
 
   desc 'Enqueue all all incoming transactions in case something went wrong with walletnotify'
   task :txs do
-    Coingate::Coin.for(:btc).process_txs_since_last_checkpoint
+    bitcoin = Coingate::Coin.for(:btc)
+
+    bitcoin.process_txs_since_last_checkpoint
+    bitcoin.reprocess_pending_txs
   end
 
 end

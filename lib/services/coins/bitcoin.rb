@@ -54,6 +54,7 @@ module Coingate
         process_txs_since( checkpoint )
       end
     end
+    
   end
 
 end
