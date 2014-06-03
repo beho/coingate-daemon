@@ -41,9 +41,11 @@ module Coingate
       end
 
       if block['confirmations'] != -1
-        checkpoint.update( blockhash: since_checkpoint['lastblock'] )
+        if checkpoint.blockhash != since_checkpoint['lastblock']
+          checkpoint.update( blockhash: since_checkpoint['lastblock'] )
 
-        Coingate.logger.info( "BTC - new checkpoint blockhash #{checkpoint.blockhash}" )
+          Coingate.logger.info( "BTC - new checkpoint blockhash #{checkpoint.blockhash}" )
+        end
       else
         checkpoint.last_blockhash = block.previousblockhash
 
