@@ -43,6 +43,7 @@ module Coingate
       end
 
       payment.confirm! if tx.confirmed?
+      payment.invalidate! if tx.invalid?
 
       payment
     end
@@ -73,6 +74,12 @@ module Coingate
       payment
     end
 
+    def process_txs_since_last_checkpoint
+      checkpoint = Checkpoint[currency_id] || Checkpoint.create( currency_id: currency_id, blockhash: best_block_hash )
+      
+      process_txs_since( checkpoint )
+    end
+
     # for defining subclasses
     class << self
       def handles( currency_id, payment_class )
@@ -84,15 +91,23 @@ module Coingate
     end
 
     class Tx
-      attr_reader :currency_id, :txid, :address, :amount
+      attr_reader :currency_id, :txid, :address, :amount, :status
 
-      def initialize( currency_id, txid, address, amount, received, confirmed )
+      def initialize( currency_id, txid, address, amount, received, confirmations )
         @currency_id = currency_id
         @txid = txid
         @address = address
         @amount = amount
         @received = received
-        @confirmed = confirmed
+
+        @status =
+          if confirmations == -1
+            :invalid
+          elsif confirmations > 5
+            :confirmed
+          else
+            :pending
+          end
       end
 
       def received?
@@ -100,7 +115,11 @@ module Coingate
       end
 
       def confirmed?
-        @confirmed
+        @status == :confirmed
+      end
+
+      def invalid?
+        @status == :invalid
       end
     end
 

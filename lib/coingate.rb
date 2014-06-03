@@ -38,10 +38,6 @@ module Coingate
       rabbitmq_full_config.delete(:worker_types)
       @rabbitmq_config = rabbitmq_full_config
 
-      # @logger = Logger.new( STDERR )
-      # @logger_file = File.new( File.join( ENV['COINGATE_ROOT_PATH'], 'log', 'coingate.log' ), File::WRONLY | File::APPEND )
-      # @logger_file.fsync = true
-
       @logger = PrognameLogger.new( ENV['COINGATE_PROCNAME'] || '?' )
 
       Sequel.default_timezone = :utc
@@ -50,7 +46,7 @@ module Coingate
       # Interop.initialize( @interop_config )
       # Coin.initialize
 
-      @logger.info( 'started' )
+      # @logger.info( 'started' )
 
       self
     end

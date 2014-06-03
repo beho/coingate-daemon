@@ -57,6 +57,8 @@ namespace :deploy do
       ensure
         invoke 'bluepill:start'
       end
+
+      execute :rake, 'cron:txs'
     end
   end
 
