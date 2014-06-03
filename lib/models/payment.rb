@@ -29,12 +29,18 @@ class Payment < Sequel::Model( :payments )
 
       self.transaction = wallet.customer.create_transaction( source_currency_id, source_income, rate, office_id )
       self.fee_transaction = system.create_transaction( source_currency_id, source_fee, rate ) if fee_percent > 0
+      self.status_id = PaymentStatus.id_for( :confirmed )
       self.confirmed_at = Time.now.utc
 
       save_changes
 
       Coingate.logger.info( "confirmed #{source_currency_id} payment[id: #{id}] for customer[id: #{customer.id}]. accounted with fee #{fee_percent.to_f * 100}% ")
     end
+  end
+
+  def invalidate!
+    update( status_id: PaymentStatus.id_for( :invalid ) )
+    # TODO reverse transactions
   end
 
   def customer_percent
