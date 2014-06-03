@@ -33,7 +33,9 @@ if Customer.empty?
   Wallet.create( customer_id: system.id, incoming_currency_id: 'BTC', stored_currency_id: 'CZK' )
 end
 
-if TransactionCheckpoint.empty?
-  TransactionCheckpoint.import([:currency_id], [
-    ['BTC']])
+if PaymentStatus.empty?
+  PaymentStatus.import([:id, :description], [
+    [0, 'pending'],
+    [1, 'confirmed'],
+    [2, 'invalid']])
 end
