@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/beho/bitcoin-client.git
-  revision: f54957967e16f21e53183e5295913a2811c6ac76
+  revision: 1c98aef8365c6eba93399ed382820f3c3f7b71e5
   specs:
     bitcoin-client (0.0.3)
       rest-client
