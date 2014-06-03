@@ -58,7 +58,9 @@ namespace :deploy do
         invoke 'bluepill:start'
       end
 
-      execute :rake, 'cron:txs'
+      within release_path do
+        execute :rake, 'cron:txs'
+      end
     end
   end
 
