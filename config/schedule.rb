@@ -5,6 +5,6 @@ set :environment_variable, 'RACK_ENV'
 #   rake 'cron:rates'
 # end
 
-every 5.minutes do
+every 1.minutes do
   rake 'cron:txs'
 end
