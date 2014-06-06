@@ -1,3 +1,4 @@
+require 'syslog/logger'
 require 'refinements'
 
 require_relative 'services/progname_logger'
@@ -38,15 +39,11 @@ module Coingate
       rabbitmq_full_config.delete(:worker_types)
       @rabbitmq_config = rabbitmq_full_config
 
-      @logger = PrognameLogger.new( ENV['COINGATE_PROCNAME'] || '?' )
+      # @logger = PrognameLogger.new( ENV['COINGATE_PROCNAME'] || '?' )
+      @logger = Syslog::Logger.new( 'coingated' )
 
       Sequel.default_timezone = :utc
       Sequel::Model.db = db
-
-      # Interop.initialize( @interop_config )
-      # Coin.initialize
-
-      # @logger.info( 'started' )
 
       self
     end
