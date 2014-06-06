@@ -17,6 +17,10 @@ module Coingate
       amount = details['amount']
       confirmations = tx_data['confirmations']
 
+      if !tx_data['walletconflicts'].empty?
+        Coingate.logger.warn( "BTC - double spend for #{txid} (#{tx['walletconflicts']})" )
+      end
+
       Tx.new( currency_id, txid, address, amount, received, confirmations )
     end
 
@@ -36,25 +40,28 @@ module Coingate
 
       Coingate.logger.info( "BTC - processing txs since #{checkpoint.blockhash}" )
 
+      # process all txs since last checkpoint
       since_checkpoint['transactions'].each do |tx|
         get_tx_and_process( tx['txid'] ) if tx['category'] == 'receive'
       end
 
       if block['confirmations'] != -1
+        # set new checkpoint if block was not reorged
         if checkpoint.blockhash != since_checkpoint['lastblock']
           checkpoint.update( blockhash: since_checkpoint['lastblock'] )
 
           Coingate.logger.info( "BTC - new checkpoint blockhash #{checkpoint.blockhash}" )
         end
       else
-        checkpoint.last_blockhash = block.previousblockhash
+        # otherwise backtrack
+        checkpoint.last_blockhash = block['previousblockhash']
 
         Coingate.logger.warn( "BTC - invalid block; backtracking to #{checkpoint.blockhash}" )
 
         process_txs_since( checkpoint )
       end
     end
-    
+
   end
 
 end
