@@ -6,8 +6,8 @@ Bluepill.application("coingated", :foreground => false, :log_file => "/var/log/b
 
 
 
-  app.process("web_api_server-1") do |process|
-    process.start_command = "./bin/web_api_server.sh"
+  app.process("server_web_api-1") do |process|
+    process.start_command = "./bin/server_web_api.sh"
 
     process.working_dir = "/coingate/coingated/current"
     process.daemonize = true
@@ -15,13 +15,13 @@ Bluepill.application("coingated", :foreground => false, :log_file => "/var/log/b
     process.stop_signals = [:quit, 30.seconds, :term, 5.seconds, :kill]
     process.stop_grace_time = 45.seconds
 
-    process.stdout = process.stderr = "/coingate/coingated/shared/log/web_api_server-1.log"
+    process.stdout = process.stderr = "/coingate/coingated/shared/log/server_web_api-1.log"
 
     process.monitor_children do |children|
       children.stop_command "kill {{PID}}"
     end
 
-    process.group = "coingated-web_api_server"
+    process.group = "coingated.server.web_api"
   end
 
 
@@ -42,14 +42,14 @@ Bluepill.application("coingated", :foreground => false, :log_file => "/var/log/b
       children.stop_command "kill {{PID}}"
     end
 
-    process.group = "coingated-tx_processor"
+    process.group = "coingated.processor.tx"
   end
 
 
 
 
-  app.process("tx_server-1") do |process|
-    process.start_command = "./bin/tx_server.sh"
+  app.process("server_tx-1") do |process|
+    process.start_command = "./bin/server_tx.sh"
 
     process.working_dir = "/coingate/coingated/current"
     process.daemonize = true
@@ -57,13 +57,13 @@ Bluepill.application("coingated", :foreground => false, :log_file => "/var/log/b
     process.stop_signals = [:quit, 30.seconds, :term, 5.seconds, :kill]
     process.stop_grace_time = 45.seconds
 
-    process.stdout = process.stderr = "/coingate/coingated/shared/log/tx_server-1.log"
+    process.stdout = process.stderr = "/coingate/coingated/shared/log/server_tx-1.log"
 
     process.monitor_children do |children|
       children.stop_command "kill {{PID}}"
     end
 
-    process.group = "coingated-tx_server"
+    process.group = "coingated.server.tx"
   end
 
 

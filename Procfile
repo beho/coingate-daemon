@@ -1,3 +1,3 @@
-web_api_server: ./bin/web_api_server.sh
-tx_process: ./bin/tx_processor.sh
-tx_server: ./bin/tx_server.sh
+server_web_api: ./bin/server_web_api.sh
+server_tx: ./bin/server_tx.sh
+tx_processor: ./bin/tx_processor.sh

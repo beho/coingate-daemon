@@ -1,12 +1,12 @@
-Bluepill.application("coingate-daemon") do |app|
+Bluepill.application("coingate-daemon", log_file: "log/bluepill.log") do |app|
 
   app.uid = "coingate"
   app.gid = "coingate"
 
 
 
-  app.process("api-1") do |process|
-    process.start_command = "./bin/web_api_server.sh"
+  app.process("server_web_api-1") do |process|
+    process.start_command = "./bin/server_web_api.sh"
 
     process.working_dir = "/Volumes/Storage/Projects/coingate/coingate-daemon"
     process.daemonize = true
@@ -14,13 +14,13 @@ Bluepill.application("coingate-daemon") do |app|
     process.stop_signals = [:quit, 30.seconds, :term, 5.seconds, :kill]
     process.stop_grace_time = 45.seconds
 
-    process.stdout = process.stderr = "log/web_api_server-1.log"
+    process.stdout = process.stderr = "log/server_web_api-1.log"
 
     process.monitor_children do |children|
       children.stop_command "kill {{PID}}"
     end
 
-    process.group = "coingate-daemon-api"
+    process.group = "coingated.server.web_api"
   end
 
 
@@ -41,14 +41,14 @@ Bluepill.application("coingate-daemon") do |app|
       children.stop_command "kill {{PID}}"
     end
 
-    process.group = "coingate-daemon-tx_processor"
+    process.group = "coingated.processor.tx"
   end
 
 
 
 
-  app.process("tx_server-1") do |process|
-    process.start_command = "./bin/tx_server.sh"
+  app.process("server_tx-1") do |process|
+    process.start_command = "./bin/server_tx.sh"
 
     process.working_dir = "/Volumes/Storage/Projects/coingate/coingate-daemon"
     process.daemonize = true
@@ -56,13 +56,13 @@ Bluepill.application("coingate-daemon") do |app|
     process.stop_signals = [:quit, 30.seconds, :term, 5.seconds, :kill]
     process.stop_grace_time = 45.seconds
 
-    process.stdout = process.stderr = "log/tx_server-1.log"
+    process.stdout = process.stderr = "log/server_tx-1.log"
 
     process.monitor_children do |children|
       children.stop_command "kill {{PID}}"
     end
 
-    process.group = "coingate-daemon-tx_server"
+    process.group = "coingated.server.tx"
   end
 
 
