@@ -54,7 +54,7 @@ module Coingate
         end
       else
         # otherwise backtrack
-        checkpoint.last_blockhash = block['previousblockhash']
+        checkpoint.blockhash = block['previousblockhash']
 
         Coingate.logger.warn( "BTC - invalid block; backtracking to #{checkpoint.blockhash}" )
 
